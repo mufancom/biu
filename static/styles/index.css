@@ -1,0 +1,96 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 12px;
+}
+
+#outputs-wrapper {
+    overflow: hidden;
+}
+
+.output-block-wrapper {
+    position: relative;
+    float: left;
+    width: 100%;
+}
+
+.output-block {
+    position: relative;
+    margin: 5px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+}
+
+.output-block pre {
+    word-wrap: break-word;
+    opacity: 0.5;
+    transition: opacity linear 0.5s;
+}
+
+.output-block.running pre {
+    opacity: 1;
+}
+
+.output-block .operations,
+.output-block .command {
+    line-height: 28px;
+    height: 28px;
+    background-color: #eee;
+}
+
+.output-block .operations {
+    float: right;
+    padding: 0 5px 0 10px;
+}
+
+.output-block .operations button {
+    display: none;
+    color: #fff;
+    background-color: #07e;
+    height: 20px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color linear 0.1s;
+}
+
+.output-block.running .operations button.restart,
+.output-block.running .operations button.stop {
+    display: inline-block;
+}
+
+.output-block.stopped .operations button.start {
+    display: inline-block;
+}
+
+.output-block .operations button:hover {
+    background-color: #08f;
+}
+
+.output-block .operations button.stop {
+    background-color: #e30;
+}
+
+.output-block .operations button.stop:hover {
+    background-color: #f40;
+}
+
+.output-block .command {
+    padding-left: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.output-block pre {
+    margin: 0;
+    padding: 5px 10px;
+    height: 200px;
+    overflow-y: auto;
+}
+
+@media screen and (min-width: 1000px) {
+    .output-block-wrapper {
+        width: 50%;
+    }
+}

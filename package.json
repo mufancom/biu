@@ -1,0 +1,31 @@
+{
+  "name": "biu",
+  "version": "0.1.0",
+  "description": "Building commands pipeline.",
+  "main": "bld/biu.js",
+  "bin": {
+    "biu": "bin/biu"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vilic/biu.git"
+  },
+  "keywords": [
+    "biu",
+    "command",
+    "multiple"
+  ],
+  "author": "vilicvane",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vilic/biu/issues"
+  },
+  "homepage": "https://github.com/vilic/biu#readme",
+  "dependencies": {
+    "ansi-to-html": "^0.3.0",
+    "commander": "^2.8.1",
+    "express": "^4.13.3",
+    "socket.io": "^1.3.6",
+    "thenfail": "^0.3.1"
+  }
+}

@@ -2,6 +2,7 @@ var Path = require('path');
 
 var program = require('commander');
 var express = require('express');
+var open = require('open');
 var AnsiConverter = require('ansi-to-html');
 
 var ansiConverter = new AnsiConverter();
@@ -15,17 +16,16 @@ var io = require('socket.io')(server);
 
 program
     .version(require('../package.json').version)
+    .usage('[biu.json]')
     .option('-o, --open-browser', 'Open browser')
     .option('-p, --port <port>', 'Open browser', /^\d+$/, 8088)
     .parse(process.argv);
 
+var biuFilePath = program.args[0] || 'biu.json';
+
 app.use(express.static(Path.join(__dirname, '../static')));
 
-server.listen(program.port);
-
-console.log('Listening to port ' + program.port + '.');
-
-var config = require(process.cwd() + '/biu.json');
+var config = require(Path.join(process.cwd(), biuFilePath));
 
 var commands = config.commands;
 
@@ -65,6 +65,19 @@ io.on('connection', function (socket) {
     initializeSocket(socket);
     startCommands();
 });
+
+var port = program.port;
+var url = 'http://localhost:' + port + '/';
+
+server.listen(port);
+
+console.log('Listening on port ' + port + '.');
+
+if (program.openBrowser) {
+    open(url);
+} else {
+    console.log('Open ' + url + ' in browser to start commands.');
+}
 
 function initializeSocket(socket) {
     socket.join('biu');

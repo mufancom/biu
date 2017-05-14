@@ -4,7 +4,7 @@
   "description": "Building commands pipeline.",
   "main": "bld/biu.js",
   "bin": {
-    "biu": "bin/biu"
+    "biu": "cli/biu.js"
   },
   "repository": {
     "type": "git",

@@ -16,13 +16,17 @@ body {
 .output-block {
     position: relative;
     margin: 5px;
-    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border-radius: 2px;
+    overflow: hidden;
 }
 
 .output-block pre {
-    word-wrap: break-word;
+    word-break: break-all;
+    white-space: pre-wrap;
     opacity: 0.5;
+    background-color: #222;
+    color: #eee;
     transition: opacity linear 0.5s;
 }
 
@@ -34,7 +38,7 @@ body {
 .output-block .command {
     line-height: 28px;
     height: 28px;
-    background-color: #eee;
+    background-color: #ddd;
 }
 
 .output-block .operations {

@@ -3,61 +3,61 @@ var outputBlocks;
 var everConnected = false;
 
 var socket = io({
-    query: {
-        get everConnected() {
-            return everConnected;
-        }
+  query: {
+    get everConnected() {
+      return everConnected;
     }
+  }
 });
 
 socket.connect();
 
 socket.on('connect', function () {
-    everConnected = true;
-    console.log('connected');
+  everConnected = true;
+  console.log('connected');
 });
 
 socket.on('reload', function () {
-    location.reload();
+  location.reload();
 });
 
 socket.on('initialize', function (data) {
-    var outputsWrapper = document.getElementById('outputs-wrapper');
+  var outputsWrapper = document.getElementById('outputs-wrapper');
 
-    outputBlocks = data
-        .commands
-        .map(function (options, index) {
-            var block = new OutputBlock(index, options.display);
+  outputBlocks = data
+    .commands
+    .map(function (options, index) {
+      var block = new OutputBlock(index, options.display);
 
-            outputsWrapper.appendChild(block.wrapper);
+      outputsWrapper.appendChild(block.wrapper);
 
-            return block;
-        });
+      return block;
+    });
 });
 
 socket.on('command-start', function (data) {
-    var block = outputBlocks[data.id];
-    block.setState('running');
+  var block = outputBlocks[data.id];
+  block.setState('running');
 });
 
 socket.on('command-exit', function (data) {
-    var block = outputBlocks[data.id];
-    block.setState('stopped');
+  var block = outputBlocks[data.id];
 
-    if (data.error) {
-        block.append('Command exited with error.\n' + data.error + '\n');
-    } else {
-        block.append('Command exited with no error.\n');
-    }
+  block.setState('stopped');
 
+  if (typeof data.code === 'number') {
+    block.append('Command exited with code' + data.code + '.\n');
+  } else {
+    block.append('Command exited.\n');
+  }
 });
 
 socket.on('stdout', function (data) {
-    var block = outputBlocks[data.id];
-    block.append(data.html);
+  var block = outputBlocks[data.id];
+  block.append(data.html);
 });
 
 socket.on('stderr', function (data) {
-    var block = outputBlocks[data.id];
-    block.append(data.html);
+  var block = outputBlocks[data.id];
+  block.append(data.html);
 });

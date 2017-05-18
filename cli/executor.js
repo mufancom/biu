@@ -28,11 +28,11 @@ class Executor extends EventEmitter {
       return;
     }
 
-    this.process = spawn(
-      this.command,
-      this.args,
-      { cwd: this.cwd }
-    );
+    console.log(`Starting command ${this.command}...`);
+
+    this.process = spawn(this.command, this.args, {
+      cwd: this.cwd,
+    });
 
     this.emit('start');
 
@@ -54,14 +54,16 @@ class Executor extends EventEmitter {
   async _stop() {
     let pid = this.process.pid;
 
-    this.process.kill();
+    console.log(`Stopping command ${this.command} (PID: ${pid})...`);
+
+    if (process.platform === 'win32') {
+      spawn('taskkill', ['/f', '/t', '/pid', pid]);
+    } else {
+      this.process.kill();
+    }
 
     try {
-      await Promise.race([
-        v.awaitable(this.process, 'exit'),
-        v.sleep(3000).then(() => Promise.reject(`Timeout killing process ${pid}`)),
-      ]);
-
+      await v.awaitable(this.process, 'exit');
       this.process = undefined;
     } finally {
       this.stopping = undefined;

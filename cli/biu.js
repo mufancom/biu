@@ -54,17 +54,16 @@ io.on('connection', async socket => {
   initialize(socket);
 
   if (commandsStarted) {
-    await v.parallel(executors, executor => executor.stop());
+    await v.parallel(executors, executor => executor.restart());
   } else {
     if (socket.handshake.query.everConnected === 'true') {
       socket.emit('reload');
       return;
     }
 
+    startCommands();
     commandsStarted = true;
   }
-
-  startCommands();
 });
 
 let port = program.port;
@@ -89,7 +88,7 @@ function initialize(socket) {
   socket.on('start-command', data => executors[data.id].start());
   socket.on('stop-command', data => executors[data.id].stop());
 
-  room.emit('initialize', { commands });
+  socket.emit('initialize', { commands });
 }
 
 function startCommands() {

@@ -46,7 +46,7 @@ socket.on('command-exit', function (data) {
   block.setState('stopped');
 
   if (typeof data.code === 'number') {
-    block.append('Command exited with code' + data.code + '.\n');
+    block.append('Command exited with code ' + data.code + '.\n');
   } else {
     block.append('Command exited.\n');
   }

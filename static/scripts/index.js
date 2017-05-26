@@ -142,7 +142,7 @@ socket.on('error', data => {
     return;
   }
 
-  taskData.block.append(`${data.output}\n`);
+  taskData.block.append(`${data.error}\n`);
 });
 
 socket.on('exit', data => {

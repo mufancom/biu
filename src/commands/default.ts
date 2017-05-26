@@ -7,15 +7,27 @@ import {
   param,
 } from 'clime';
 
+import * as open from 'open';
+
 import { Config } from '../core/config';
 import { Server } from '../core/server';
 
+const log = console.log;
+
 export class BiuOptions extends Options {
   @option({
+    flag: 'p',
     description: 'Port to listen, default to `8088`.',
     default: 8088,
   })
   port: number;
+
+  @option({
+    flag: 'o',
+    description: 'Open browser.',
+    toggle: true,
+  })
+  open: boolean;
 }
 
 @command({
@@ -34,6 +46,14 @@ export default class extends Command {
     let config = configFile.require<Config>();
     let server = new Server(config);
 
-    server.listen(options.port);
+    await server.listen(options.port);
+
+    let url = `http://localhost:${options.port}/`;
+
+    log(`Open ${url} to start tasks.`);
+
+    if (options.open) {
+      open(url);
+    }
   }
 }

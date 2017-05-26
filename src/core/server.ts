@@ -14,8 +14,6 @@ import * as v from 'villa';
 import { Config } from './config';
 import { Task } from './task';
 
-const log = console.log;
-
 export interface TaskCreationCommand {
   names: string[];
   closeAll: boolean;
@@ -49,7 +47,6 @@ export class Server extends EventEmitter {
 
   async listen(port: number): Promise<void> {
     await v.call<void>(this.server.listen.bind(this.server), port);
-    log(`Open http://localhost:${port}/ to start tasks.`);
   }
 
   async create(taskNames: string[], closeAll: boolean): Promise<void> {

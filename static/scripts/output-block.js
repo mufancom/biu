@@ -1,5 +1,5 @@
 class OutputBlock {
-  constructor(id, display) {
+  constructor(id, line) {
     let that = this;
 
     let wrapper = document.createElement('div');
@@ -19,7 +19,7 @@ class OutputBlock {
 
     wrapper
       .getElementsByClassName('command')[0]
-      .innerText = display;
+      .innerText = line;
 
     this.block = wrapper.getElementsByClassName('output-block')[0];
     this.pre = wrapper.getElementsByClassName('output')[0];
@@ -27,15 +27,11 @@ class OutputBlock {
 
     let opWrapper = wrapper.getElementsByClassName('operations')[0];
 
-    opWrapper.addEventListener('click', function (event) {
+    opWrapper.addEventListener('click', event => {
       let button = event.target;
       let type = button.getAttribute('data-type');
 
-      socket.emit(type, {
-        id: id
-      }, function () {
-
-      });
+      socket.emit(type, { id });
 
       switch (type) {
         case 'restart':

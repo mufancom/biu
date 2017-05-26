@@ -6,13 +6,15 @@ import {
 import { EventEmitter } from 'events';
 import * as Path from 'path';
 
-import * as ansiHtml from 'ansi-html';
+import * as AnsiConverter from 'ansi-to-html';
 import * as express from 'express';
 import * as socketIO from 'socket.io';
 import * as v from 'villa';
 
 import { Config } from './config';
 import { Task } from './task';
+
+const ansiConverter = new AnsiConverter();
 
 export interface TaskCreationCommand {
   names: string[];
@@ -124,14 +126,14 @@ export class Server extends EventEmitter {
     task.on('stdout', (data: Buffer) => {
       this.room.emit('stdout', {
         id,
-        html: ansiHtml(data.toString()),
+        html: ansiConverter.toHtml(data.toString()),
       });
     });
 
     task.on('stderr', (data: Buffer) => {
       this.room.emit('stderr', {
         id,
-        html: ansiHtml(data.toString()),
+        html: ansiConverter.toHtml(data.toString()),
       });
     });
   }

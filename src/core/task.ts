@@ -26,7 +26,12 @@ export class Task extends EventEmitter {
     public options: TaskOptions,
   ) {
     super();
-    this.path = which(executable);
+
+    try {
+      this.path = which(executable);
+    } catch (error) {
+      this.path = executable;
+    }
   }
 
   get line(): string {

@@ -14,9 +14,11 @@ import * as v from 'villa';
 import { Config } from './config';
 import { Task } from './task';
 
+const log = console.log;
+
 export interface TaskCreationCommand {
   names: string[];
-  clearAll: boolean;
+  closeAll: boolean;
 }
 
 export interface TaskOperationCommand {
@@ -47,11 +49,12 @@ export class Server extends EventEmitter {
 
   async listen(port: number): Promise<void> {
     await v.call<void>(this.server.listen.bind(this.server), port);
+    log(`Open http://localhost:${port}/ to start tasks.`);
   }
 
-  async create(taskNames: string[], clearAll: boolean): Promise<void> {
-    if (clearAll) {
-      await this.clearAll();
+  async create(taskNames: string[], closeAll: boolean): Promise<void> {
+    if (closeAll) {
+      await this.closeAll();
     }
 
     for (let name of taskNames) {
@@ -84,11 +87,11 @@ export class Server extends EventEmitter {
     }
   }
 
-  async clearAll(): Promise<void> {
-    await v.parallel(Array.from(this.taskMap), ([id]) => this.clear(id));
+  async closeAll(): Promise<void> {
+    await v.parallel(Array.from(this.taskMap), ([id]) => this.close(id));
   }
 
-  async clear(id: string): Promise<void> {
+  async close(id: string): Promise<void> {
     let task = this.taskMap.get(id);
 
     if (!task) {
@@ -99,7 +102,7 @@ export class Server extends EventEmitter {
 
     this.taskMap.delete(id);
 
-    this.room.emit('clear', { id });
+    this.room.emit('close', { id });
   }
 
   private setup(): void {
@@ -140,15 +143,15 @@ export class Server extends EventEmitter {
     socket.join('biu');
 
     socket.on('create', async (data: TaskCreationCommand) => {
-      await this.create(data.names, data.clearAll);
+      await this.create(data.names, data.closeAll);
     });
 
-    socket.on('clear', async (data: TaskOperationCommand) => {
-      await this.clear(data.id);
+    socket.on('close', async (data: TaskOperationCommand) => {
+      await this.close(data.id);
     });
 
-    socket.on('clear-all', async () => {
-      await this.clearAll();
+    socket.on('close-all', async () => {
+      await this.closeAll();
     });
 
     socket.on('restart', (data: TaskOperationCommand) => {

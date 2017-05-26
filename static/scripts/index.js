@@ -1,6 +1,6 @@
 const groupList = document.getElementById('group-list');
 const taskList = document.getElementById('task-list');
-const clearAllButton = document.getElementById('clear-all-button');
+const closeAllButton = document.getElementById('close-all-button');
 const outputsWrapper = document.getElementById('outputs-wrapper');
 
 let taskGroupMap;
@@ -17,7 +17,7 @@ groupList.addEventListener('click', event => {
 
   socket.emit('create', {
     names: taskGroupMap.get(name),
-    clearAll: true,
+    closeAll: true,
   });
 });
 
@@ -32,12 +32,12 @@ taskList.addEventListener('click', event => {
 
   socket.emit('create', {
     names: [name],
-    clearAll: false,
+    closeAll: false,
   });
 });
 
-clearAllButton.addEventListener('click', () => {
-  socket.emit('clear-all');
+closeAllButton.addEventListener('click', () => {
+  socket.emit('close-all');
 });
 
 let socket = io();
@@ -102,7 +102,7 @@ socket.on('create', data => {
   appendTask(Object.assign({ running: true }, data));
 });
 
-socket.on('clear', data => {
+socket.on('close', data => {
   let taskData = taskDataMap.get(data.id);
 
   if (!taskData) {

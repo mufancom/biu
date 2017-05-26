@@ -35,7 +35,7 @@ button.green:hover {
 }
 
 #navbar {
-  margin: 0 5px 10px 5px;
+  margin: 0 5px;
   line-height: 20px;
   text-align: right;
   overflow: hidden;
@@ -43,6 +43,7 @@ button.green:hover {
 
 #groups-wrapper,
 #tasks-wrapper {
+  margin-bottom: 10px;
   float: left;
 }
 
@@ -55,7 +56,8 @@ button.green:hover {
   margin-left: 10px;
 }
 
-#clear-all-button {
+#close-all-button {
+  margin-bottom: 10px;
   float: right;
 }
 
@@ -114,7 +116,7 @@ button.green:hover {
 .output-block.running .operations button.restart,
 .output-block.running .operations button.stop,
 .output-block.stopped .operations button.start,
-.output-block .operations button.clear {
+.output-block .operations button.close {
   display: inline-block;
 }
 

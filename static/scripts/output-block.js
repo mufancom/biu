@@ -11,7 +11,7 @@ class OutputBlock {
     <button class="start" data-type="start">start</button>
     <button class="restart" data-type="restart">restart</button>
     <button class="stop" data-type="stop">stop</button>
-    <button class="clear red" data-type="clear">clear</button>
+    <button class="close red" data-type="close">close</button>
   </div>
   <div class="command"></div>
   <pre class="output"></pre>

@@ -1,3 +1,7 @@
-/typings/
+/src/
+/types/
+
+/tsconfig.json
+/tslint.json
 
 .*

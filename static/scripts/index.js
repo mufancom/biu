@@ -1,63 +1,195 @@
-var outputBlocks;
+const groupList = document.getElementById('group-list');
+const taskList = document.getElementById('task-list');
+const clearAllButton = document.getElementById('clear-all-button');
+const outputsWrapper = document.getElementById('outputs-wrapper');
 
-var everConnected = false;
+let taskGroupMap;
+let taskDataMap;
 
-var socket = io({
-  query: {
-    get everConnected() {
-      return everConnected;
-    }
+groupList.addEventListener('click', event => {
+  let target = event.target;
+
+  if (target.tagName !== 'BUTTON') {
+    return;
   }
+
+  let name = target.getAttribute('data-name');
+
+  socket.emit('create', {
+    names: taskGroupMap.get(name),
+    clearAll: true,
+  });
 });
+
+taskList.addEventListener('click', event => {
+  let target = event.target;
+
+  if (target.tagName !== 'BUTTON') {
+    return;
+  }
+
+  let name = target.getAttribute('data-name');
+
+  socket.emit('create', {
+    names: [name],
+    clearAll: false,
+  });
+});
+
+clearAllButton.addEventListener('click', () => {
+  socket.emit('clear-all');
+});
+
+let socket = io();
 
 socket.connect();
 
 socket.on('connect', function () {
-  everConnected = true;
   console.log('connected');
 });
 
-socket.on('reload', function () {
-  location.reload();
-});
-
 socket.on('initialize', function (data) {
-  var outputsWrapper = document.getElementById('outputs-wrapper');
+  groupList.innerHTML = '';
+  taskList.innerHTML = '';
+  outputsWrapper.innerHTML = '';
 
-  outputBlocks = data
-    .commands
-    .map(function (options, index) {
-      var block = new OutputBlock(index, options.display);
+  let groupDict = data.taskGroups || {};
+  let groupNames = Object.keys(groupDict);
+  let taskNames = data.taskNames || [];
 
-      outputsWrapper.appendChild(block.wrapper);
+  taskGroupMap = Object
+    .keys(groupDict)
+    .reduce((map, name) => {
+      map.set(name, groupDict[name]);
+      return map;
+    }, new Map());
 
-      return block;
-    });
-});
+  if (groupNames.length) {
+    let groupsFragment = document.createDocumentFragment();
 
-socket.on('command-start', function (data) {
-  var block = outputBlocks[data.id];
-  block.setState('running');
-});
+    for (let name of groupNames) {
+      let button = document.createElement('button');
+      button.innerText = name;
+      button.setAttribute('data-name', name);
+      groupsFragment.appendChild(button);
+    }
 
-socket.on('command-exit', function (data) {
-  var block = outputBlocks[data.id];
-
-  block.setState('stopped');
-
-  if (typeof data.code === 'number') {
-    block.append('Command exited with code ' + data.code + '.\n');
+    groupList.appendChild(groupsFragment);
   } else {
-    block.append('Command exited.\n');
+    groupList.innerHTML = 'none';
+  }
+
+  let tasksFragment = document.createDocumentFragment();
+
+  for (let name of taskNames) {
+    let button = document.createElement('button');
+    button.classList.add('green');
+    button.innerText = name;
+    button.setAttribute('data-name', name);
+    tasksFragment.appendChild(button);
+  }
+
+  taskList.appendChild(tasksFragment);
+
+  taskDataMap = new Map();
+
+  for (let task of data.createdTasks) {
+    appendTask(task);
   }
 });
 
-socket.on('stdout', function (data) {
-  var block = outputBlocks[data.id];
-  block.append(data.html);
+socket.on('create', data => {
+  appendTask(Object.assign({ running: true }, data));
 });
 
-socket.on('stderr', function (data) {
-  var block = outputBlocks[data.id];
-  block.append(data.html);
+socket.on('clear', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  taskData.block.remove();
 });
+
+socket.on('start', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  taskData.task.running = true;
+  taskData.block.setState('running');
+  taskData.block.append('Task started.\n');
+});
+
+socket.on('stop', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  taskData.task.running = false;
+  taskData.block.setState('stopped');
+});
+
+socket.on('error', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  taskData.block.append(`${data.output}\n`);
+});
+
+socket.on('exit', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  let text = data.code ?
+    `Task exited with code ${data.code}.\n` :
+    `Task exited.`;
+
+  taskData.block.append(text);
+});
+
+socket.on('stdout', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  taskData.block.append(data.html);
+});
+
+socket.on('stderr', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  taskData.block.append(data.html);
+});
+
+function appendTask(task) {
+  let block = new OutputBlock(task.id, task.line);
+
+  block.setState(task.running ? 'running' : 'stopped');
+
+  outputsWrapper.appendChild(block.wrapper);
+
+  taskDataMap.set(task.id, {
+    task,
+    block,
+  });
+
+  return block;
+}

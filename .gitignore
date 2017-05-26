@@ -1,1 +1,8 @@
+/.vscode/launch.json
+
 /node_modules/
+/bld/
+
+/npm-debug.log
+
+/.biu.json

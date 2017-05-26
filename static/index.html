@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Biu!</title>
-    <link rel="stylesheet" href="styles/index.css" />
-    <script src="socket.io.js"></script>
+  <meta charset="utf-8">
+  <title>Biu!</title>
+  <link rel="stylesheet" href="/styles/index.css" />
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-    <div id="outputs-wrapper"></div>
-    <script src="scripts/output-block.js"></script>
-    <script src="scripts/index.js"></script>
+  <div id="navbar">
+    <div id="groups-wrapper">
+      <b>Groups</b>
+      <div id="group-list"></div>
+    </div>
+    <div id="tasks-wrapper">
+      <b>Tasks</b>
+      <div id="task-list"></div>
+    </div>
+    <button id="clear-all-button" class="red">clear all</button>
+  </div>
+  <div id="outputs-wrapper"></div>
+  <script src="/scripts/output-block.js"></script>
+  <script src="/scripts/index.js"></script>
 </body>
 </html>

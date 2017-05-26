@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "noEmitOnError": true,
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "skipDefaultLibCheck": true,
+    "newLine": "LF",
+    "rootDir": "src",
+    "outDir": "bld"
+  },
+  "exclude": [
+    "bld",
+    "node_modules"
+  ]
+}

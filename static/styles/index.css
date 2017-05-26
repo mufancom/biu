@@ -1,100 +1,139 @@
 body {
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    font-size: 12px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 12px;
+}
+
+button {
+  color: #fff;
+  background-color: #07e;
+  height: 20px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color linear 0.1s;
+}
+
+button:hover {
+  background-color: #08f;
+}
+
+button.red {
+  background-color: #e30;
+}
+
+button.red:hover {
+  background-color: #f40;
+}
+
+button.green {
+  background-color: #3b0;
+}
+
+button.green:hover {
+  background-color: #4c0;
+}
+
+#navbar {
+  margin: 0 5px 10px 5px;
+  line-height: 20px;
+  text-align: right;
+  overflow: hidden;
+}
+
+#groups-wrapper,
+#tasks-wrapper {
+  float: left;
+}
+
+#group-list,
+#task-list {
+  display: inline;
+}
+
+#tasks-wrapper {
+  margin-left: 10px;
+}
+
+#clear-all-button {
+  float: right;
+}
+
+#group-list button,
+#task-list button {
+  margin: 0 2px;
 }
 
 #outputs-wrapper {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .output-block-wrapper {
-    position: relative;
-    float: left;
-    width: 100%;
+  position: relative;
+  float: left;
+  width: 100%;
 }
 
 .output-block {
-    position: relative;
-    margin: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    border-radius: 2px;
-    overflow: hidden;
+  position: relative;
+  margin: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
 }
 
 .output-block pre {
-    word-break: break-all;
-    white-space: pre-wrap;
-    opacity: 0.5;
-    background-color: #222;
-    color: #eee;
-    transition: opacity linear 0.5s;
+  word-break: break-all;
+  white-space: pre-wrap;
+  opacity: 0.5;
+  background-color: #222;
+  color: #eee;
+  transition: opacity linear 0.5s;
 }
 
 .output-block.running pre {
-    opacity: 1;
+  opacity: 1;
 }
 
 .output-block .operations,
 .output-block .command {
-    line-height: 28px;
-    height: 28px;
-    background-color: #ddd;
+  line-height: 28px;
+  height: 28px;
+  background-color: #ddd;
 }
 
 .output-block .operations {
-    float: right;
-    padding: 0 5px 0 10px;
+  float: right;
+  padding: 0 5px 0 10px;
 }
 
 .output-block .operations button {
-    display: none;
-    color: #fff;
-    background-color: #07e;
-    height: 20px;
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
-    outline: none;
-    transition: background-color linear 0.1s;
+  display: none;
 }
 
 .output-block.running .operations button.restart,
-.output-block.running .operations button.stop {
-    display: inline-block;
-}
-
-.output-block.stopped .operations button.start {
-    display: inline-block;
-}
-
-.output-block .operations button:hover {
-    background-color: #08f;
-}
-
-.output-block .operations button.stop {
-    background-color: #e30;
-}
-
-.output-block .operations button.stop:hover {
-    background-color: #f40;
+.output-block.running .operations button.stop,
+.output-block.stopped .operations button.start,
+.output-block .operations button.clear {
+  display: inline-block;
 }
 
 .output-block .command {
-    padding-left: 10px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  padding-left: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .output-block pre {
-    margin: 0;
-    padding: 5px 10px;
-    height: 200px;
-    overflow-y: auto;
+  margin: 0;
+  padding: 5px 10px;
+  height: 320px;
+  overflow-y: auto;
 }
 
 @media screen and (min-width: 1000px) {
-    .output-block-wrapper {
-        width: 50%;
-    }
+  .output-block-wrapper {
+    width: 50%;
+  }
 }

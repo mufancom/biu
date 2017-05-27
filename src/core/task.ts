@@ -68,13 +68,21 @@ export class Task extends EventEmitter {
     this.process.once('error', error => this.handleStop(error));
     this.process.once('exit', code => this.handleStop(undefined, code));
 
-    this.process.stdout.on('data', data => this.emit('stdout', data));
-    this.process.stderr.on('data', data => this.emit('stderr', data));
+    this.process.stdout.on('data', (data: Buffer) => {
+      if (this.problemMatcher) {
+        this.problemMatcher.push(data);
+      }
 
-    if (this.problemMatcher) {
-      this.process.stdout.pipe(this.problemMatcher);
-      this.process.stderr.pipe(this.problemMatcher);
-    }
+      this.emit('stdout', data);
+    });
+
+    this.process.stderr.on('data', (data: Buffer) => {
+      if (this.problemMatcher) {
+        this.problemMatcher.push(data);
+      }
+
+      this.emit('stderr', data);
+    });
 
     if (this.options.stdout) {
       this.process.stdout.pipe(process.stdout);

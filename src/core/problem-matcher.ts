@@ -1,5 +1,5 @@
+import { EventEmitter } from 'events';
 import * as Path from 'path';
-import * as Stream from 'stream';
 
 import * as Chalk from 'chalk';
 
@@ -17,7 +17,7 @@ export interface Problem {
   message?: string;
 }
 
-export class ProblemMatcher extends Stream.Writable {
+export class ProblemMatcher extends EventEmitter {
   pattern: ProblemMatcherPatternConfig;
   watching: ProblemMatcherWatchingConfig;
 
@@ -87,7 +87,7 @@ export class ProblemMatcher extends Stream.Writable {
     });
   }
 
-  _write(chunk: Buffer, encoding: string, next: () => void): void {
+  push(chunk: Buffer): void {
     this.pendingOutput += chunk.toString();
 
     let lineRegex = /(.*)([\r\n\u2028\u2029]?)/g;
@@ -105,7 +105,5 @@ export class ProblemMatcher extends Stream.Writable {
         break;
       }
     }
-
-    next();
   }
 }

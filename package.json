@@ -30,7 +30,7 @@
   "homepage": "https://github.com/vilic/biu#readme",
   "dependencies": {
     "ansi-to-html": "^0.6.2",
-    "clime": "^0.5.0-dev.3",
+    "clime": "0.5.0-dev.3",
     "express": "^4.15.3",
     "npm-which": "^3.0.1",
     "open": "0.0.5",

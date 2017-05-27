@@ -56,10 +56,16 @@ export class Server extends EventEmitter {
       await this.closeAll();
     }
 
+    let problemMatcherDict = this.config.problemMatchers || {};
+
     for (let name of taskNames) {
       let id = (++this.lastTaskId).toString();
 
       let options = this.config.tasks[name];
+
+      let problemMatcherConfig = typeof options.problemMatcher === 'string' ?
+        problemMatcherDict[options.problemMatcher] :
+        options.problemMatcher;
 
       let task = new Task(
         name,
@@ -69,6 +75,7 @@ export class Server extends EventEmitter {
           cwd: options.cwd || process.cwd(),
           stdout: !!options.stdout,
           stderr: !!options.stderr,
+          problemMatcher: problemMatcherConfig,
         },
       );
 
@@ -109,6 +116,42 @@ export class Server extends EventEmitter {
     this.io.on('connection', socket => this.initializeConnection(socket));
   }
 
+  private outputProblems(): void {
+    let lineSetMap = new Map<string, Set<string>>();
+
+    for (let [_, { problemMatcher }] of this.taskMap) {
+      if (!problemMatcher) {
+        continue;
+      }
+
+      let lineSet = lineSetMap.get(problemMatcher.owner);
+
+      if (!lineSet) {
+        lineSetMap.set(problemMatcher.owner, lineSet = new Set<string>());
+      }
+
+      for (let problem of problemMatcher.problems) {
+        lineSet.add([
+          problem.severity,
+          problem.file,
+          problem.location,
+          problem.code,
+          problem.message,
+        ].join(';'));
+      }
+    }
+
+    for (let [owner, lineSet] of lineSetMap) {
+      process.stdout.write(`[biu-problems;${owner};begin]\n`);
+
+      for (let line of lineSet) {
+        process.stdout.write(`[biu-problem;${line}]\n`);
+      }
+
+      process.stdout.write(`[biu-problems;${owner};end]\n`);
+    }
+  }
+
   private initializeTask(id: string, task: Task): void {
     task.on('start', () => this.room.emit('start', { id }));
     task.on('stop', () => this.room.emit('stop', { id }));
@@ -136,6 +179,8 @@ export class Server extends EventEmitter {
         html: ansiConverter.toHtml(data.toString()),
       });
     });
+
+    task.on('problems-update', () => this.outputProblems());
   }
 
   private initializeConnection(socket: SocketIO.Socket): void {

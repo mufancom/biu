@@ -5,17 +5,22 @@ import * as whichBuilder from 'npm-which';
 import * as shellEscape from 'shell-escape';
 import * as v from 'villa';
 
+import { ProblemMatcherConfig } from './config';
+import { ProblemMatcher } from './problem-matcher';
+
 const which = whichBuilder(process.cwd()).sync;
 
 export interface TaskOptions {
   cwd: string;
   stdout: boolean;
   stderr: boolean;
+  problemMatcher: ProblemMatcherConfig | undefined;
 }
 
 export class Task extends EventEmitter {
   path: string;
   running = false;
+  problemMatcher: ProblemMatcher | undefined;
 
   private process: ChildProcess | undefined;
 
@@ -31,6 +36,11 @@ export class Task extends EventEmitter {
       this.path = which(executable);
     } catch (error) {
       this.path = executable;
+    }
+
+    if (options.problemMatcher) {
+      this.problemMatcher = new ProblemMatcher(options.problemMatcher, options.cwd);
+      this.problemMatcher.on('problems-update', () => this.emit('problems-update'));
     }
   }
 
@@ -60,6 +70,11 @@ export class Task extends EventEmitter {
 
     this.process.stdout.on('data', data => this.emit('stdout', data));
     this.process.stderr.on('data', data => this.emit('stderr', data));
+
+    if (this.problemMatcher) {
+      this.process.stdout.pipe(this.problemMatcher);
+      this.process.stderr.pipe(this.problemMatcher);
+    }
 
     if (this.options.stdout) {
       this.process.stdout.pipe(process.stdout);

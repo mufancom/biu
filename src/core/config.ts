@@ -1,10 +1,7 @@
-export interface ProblemMatcherPatternConfig {
+import { ProblemMatcherPatternBase } from './problem-matcher';
+
+export interface ProblemMatcherPatternConfig extends ProblemMatcherPatternBase {
   regexp: string;
-  severity?: number;
-  file: number;
-  location: number;
-  code?: number;
-  message?: number;
 }
 
 export interface ProblemMatcherWatchingConfig {
@@ -15,7 +12,7 @@ export interface ProblemMatcherWatchingConfig {
 
 export interface ProblemMatcherConfig {
   owner: string;
-  pattern: ProblemMatcherPatternConfig;
+  pattern: ProblemMatcherPatternConfig | ProblemMatcherPatternConfig[];
   watching: ProblemMatcherWatchingConfig;
 }
 

@@ -44,11 +44,11 @@ let socket = io();
 
 socket.connect();
 
-socket.on('connect', function () {
+socket.on('connect', () => {
   console.log('connected');
 });
 
-socket.on('initialize', function (data) {
+socket.on('initialize', data => {
   groupList.innerHTML = '';
   taskList.innerHTML = '';
   outputsWrapper.innerHTML = '';

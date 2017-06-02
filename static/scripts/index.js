@@ -2,6 +2,7 @@ const groupList = document.getElementById('group-list');
 const taskList = document.getElementById('task-list');
 const closeAllButton = document.getElementById('close-all-button');
 const outputsWrapper = document.getElementById('outputs-wrapper');
+const disconnectedMask = document.getElementById('disconnected-mask');
 
 let taskGroupMap;
 let taskDataMap;
@@ -45,7 +46,13 @@ let socket = io();
 socket.connect();
 
 socket.on('connect', () => {
+  disconnectedMask.style.display = 'none';
   console.log('connected');
+});
+
+socket.on('disconnect', () => {
+  disconnectedMask.style.display = '';
+  console.log('disconnected');
 });
 
 socket.on('initialize', data => {

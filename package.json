@@ -1,6 +1,6 @@
 {
   "name": "biu",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "The command-line task hub.",
   "bin": {
     "biu": "bld/cli.js"

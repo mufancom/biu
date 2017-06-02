@@ -36,6 +36,7 @@ export class Server extends EventEmitter {
 
   constructor(
     public config: Config,
+    public configDir: string,
   ) {
     super();
 
@@ -72,7 +73,7 @@ export class Server extends EventEmitter {
         options.executable,
         options.args || [],
         {
-          cwd: options.cwd || process.cwd(),
+          cwd: options.cwd ? Path.resolve(this.configDir, options.cwd) : process.cwd(),
           stdout: !!options.stdout,
           stderr: !!options.stderr,
           problemMatcher: problemMatcherConfig,

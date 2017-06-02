@@ -1,3 +1,5 @@
+import * as Path from 'path';
+
 import {
   Castable,
   Command,
@@ -44,7 +46,7 @@ export default class extends Command {
     options: BiuOptions,
   ) {
     let config = configFile.require<Config>();
-    let server = new Server(config);
+    let server = new Server(config, Path.dirname(configFile.fullName));
 
     await server.listen(options.port);
 

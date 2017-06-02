@@ -1,6 +1,6 @@
 const groupList = document.getElementById('group-list');
 const taskList = document.getElementById('task-list');
-const closeAllButton = document.getElementById('close-all-button');
+const allOperationsWrapper = document.getElementById('all-operations-wrapper');
 const outputsWrapper = document.getElementById('outputs-wrapper');
 const disconnectedMask = document.getElementById('disconnected-mask');
 
@@ -58,8 +58,16 @@ taskList.addEventListener('click', event => {
   }
 });
 
-closeAllButton.addEventListener('click', () => {
-  socket.emit('close-all');
+allOperationsWrapper.addEventListener('click', () => {
+  let button = event.target;
+
+  if (button.tagName !== 'BUTTON') {
+    return;
+  }
+
+  let type = button.getAttribute('data-type');
+
+  socket.emit(type);
 });
 
 let socket = io();

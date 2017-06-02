@@ -29,16 +29,14 @@ class OutputBlock {
 
     opWrapper.addEventListener('click', event => {
       let button = event.target;
+
+      if (button.tagName !== 'BUTTON') {
+        return;
+      }
+
       let type = button.getAttribute('data-type');
 
       socket.emit(type, { id });
-
-      switch (type) {
-        case 'restart':
-        case 'stop':
-          that.setState(undefined);
-          break;
-      }
     });
   }
 

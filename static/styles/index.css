@@ -65,6 +65,8 @@ button.created.running::before {
 #tasks-wrapper > * {
   padding: 2px 4px;
   display: table-cell;
+  vertical-align: top;
+  line-height: 24px;
 }
 
 #groups-wrapper > label,
@@ -72,13 +74,17 @@ button.created.running::before {
   width: 1%;
 }
 
-#close-all-button {
+#task-list {
+  float: left;
+}
+
+#all-operations-wrapper {
   float: right;
 }
 
-#group-list button,
-#task-list button {
-  margin: 0 2px;
+#navbar button {
+  float: left;
+  margin: 2px;
 }
 
 #outputs-wrapper {

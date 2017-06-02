@@ -94,8 +94,50 @@ export class Server extends EventEmitter {
     }
   }
 
+  async startAll(): Promise<void> {
+    await v.parallel(Array.from(this.taskMap), ([id]) => this.start(id));
+  }
+
+  async restartAll(): Promise<void> {
+    await v.parallel(Array.from(this.taskMap), ([id]) => this.restart(id));
+  }
+
+  async stopAll(): Promise<void> {
+    await v.parallel(Array.from(this.taskMap), ([id]) => this.stop(id));
+  }
+
   async closeAll(): Promise<void> {
     await v.parallel(Array.from(this.taskMap), ([id]) => this.close(id));
+  }
+
+  async start(id: string): Promise<void> {
+    let task = this.taskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    task.start();
+  }
+
+  async stop(id: string): Promise<void> {
+    let task = this.taskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    task.stop();
+  }
+
+  async restart(id: string): Promise<void> {
+    let task = this.taskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    await task.restart();
   }
 
   async close(id: string): Promise<void> {
@@ -195,38 +237,32 @@ export class Server extends EventEmitter {
       await this.close(data.id);
     });
 
+    socket.on('restart', async (data: TaskOperationCommand) => {
+      await this.restart(data.id);
+    });
+
+    socket.on('start', async (data: TaskOperationCommand) => {
+      await this.start(data.id);
+    });
+
+    socket.on('stop', async (data: TaskOperationCommand) => {
+      await this.stop(data.id);
+    });
+
+    socket.on('start-all', async () => {
+      await this.startAll();
+    });
+
+    socket.on('stop-all', async () => {
+      await this.stopAll();
+    });
+
+    socket.on('restart-all', async () => {
+      await this.restartAll();
+    });
+
     socket.on('close-all', async () => {
       await this.closeAll();
-    });
-
-    socket.on('restart', (data: TaskOperationCommand) => {
-      let task = this.taskMap.get(data.id);
-
-      if (!task) {
-        return;
-      }
-
-      task.restart();
-    });
-
-    socket.on('start', (data: TaskOperationCommand) => {
-      let task = this.taskMap.get(data.id);
-
-      if (!task) {
-        return;
-      }
-
-      task.start();
-    });
-
-    socket.on('stop', (data: TaskOperationCommand) => {
-      let task = this.taskMap.get(data.id);
-
-      if (!task) {
-        return;
-      }
-
-      task.stop();
     });
 
     socket.emit('initialize', {

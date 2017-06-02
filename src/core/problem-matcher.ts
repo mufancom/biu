@@ -105,7 +105,7 @@ export class ProblemMatcher extends EventEmitter {
       if (this.beginsRegex.test(line)) {
         this.active = true;
         this.problems = [];
-        clearTimeout(this.problemsUpdateEventTimer!);
+        this.scheduleProblemsUpdateEvent();
       }
 
       if (!this.active) {

@@ -132,10 +132,13 @@ socket.on('initialize', data => {
   for (let task of data.createdTasks) {
     appendTask(task);
   }
+
+  updateAllOperationsVisibility();
 });
 
 socket.on('create', data => {
   appendTask(Object.assign({ running: true }, data));
+  updateAllOperationsVisibility();
 });
 
 socket.on('close', data => {
@@ -147,8 +150,9 @@ socket.on('close', data => {
 
   taskData.block.remove();
   taskData.button.removeAttribute('data-id');
-  updateTaskButtonState(data.id, []);
+  updateTaskButtonStatuses(data.id, []);
   taskDataMap.delete(data.id);
+  updateAllOperationsVisibility();
 });
 
 socket.on('start', data => {
@@ -161,7 +165,8 @@ socket.on('start', data => {
   taskData.task.running = true;
   taskData.block.setState('running');
   taskData.block.append('Task started.\n');
-  updateTaskButtonState(data.id, ['created', 'running']);
+  updateTaskButtonStatuses(data.id, ['created', 'running']);
+  updateAllOperationsVisibility();
 });
 
 socket.on('stop', data => {
@@ -173,7 +178,8 @@ socket.on('stop', data => {
 
   taskData.task.running = false;
   taskData.block.setState('stopped');
-  updateTaskButtonState(data.id, ['created']);
+  updateTaskButtonStatuses(data.id, ['created']);
+  updateAllOperationsVisibility();
 });
 
 socket.on('error', data => {
@@ -236,12 +242,12 @@ function appendTask(task) {
     button,
   });
 
-  updateTaskButtonState(task.id, task.running ? ['created', 'running'] : ['created']);
+  updateTaskButtonStatuses(task.id, task.running ? ['created', 'running'] : ['created']);
 
   return block;
 }
 
-function updateTaskButtonState(id, states) {
+function updateTaskButtonStatuses(id, statuses) {
   let taskData = taskDataMap.get(id);
 
   if (!taskData) {
@@ -251,5 +257,29 @@ function updateTaskButtonState(id, states) {
   let button = taskData.button;
 
   button.classList.remove('created', 'running');
-  button.classList.add(...states);
+  button.classList.add(...statuses);
+}
+
+function updateAllOperationsVisibility() {
+  allOperationsWrapper.classList.remove('none-running', 'some-running', 'all-running');
+
+  let tasks = Array.from(taskDataMap.values()).map(taskData => taskData.task);
+
+  if (!tasks.length) {
+    return;
+  }
+
+  let running = tasks.filter(task => task.running);
+
+  let statuses = [];
+
+  if (running.length === tasks.length) {
+    statuses.push('all-running');
+  } else if (running.length) {
+    statuses.push('some-running');
+  } else {
+    statuses.push('none-running');
+  }
+
+  allOperationsWrapper.classList.add(...statuses);
 }

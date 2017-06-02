@@ -56,6 +56,11 @@ button.created.running::before {
   overflow: hidden;
 }
 
+#navbar button {
+  float: left;
+  margin: 2px;
+}
+
 #groups-wrapper,
 #tasks-wrapper {
   display: table-row;
@@ -82,9 +87,26 @@ button.created.running::before {
   float: right;
 }
 
-#navbar button {
-  float: left;
-  margin: 2px;
+#all-operations-wrapper button {
+  display: none;
+}
+
+#all-operations-wrapper.none-running button.start-all,
+#all-operations-wrapper.some-running button.start-all {
+  display: inline-block;
+}
+
+#all-operations-wrapper.all-running button.restart-all,
+#all-operations-wrapper.some-running button.restart-all,
+#all-operations-wrapper.all-running button.stop-all,
+#all-operations-wrapper.some-running button.stop-all {
+  display: inline-block;
+}
+
+#all-operations-wrapper.none-running button.close-all,
+#all-operations-wrapper.some-running button.close-all,
+#all-operations-wrapper.all-running button.close-all {
+  display: inline-block;
 }
 
 #outputs-wrapper {

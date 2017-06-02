@@ -1,6 +1,7 @@
 import { ChildProcess, spawn } from 'child_process';
 import { EventEmitter } from 'events';
 
+import * as Chokidar from 'chokidar';
 import * as whichBuilder from 'npm-which';
 import * as shellEscape from 'shell-escape';
 import * as v from 'villa';
@@ -15,6 +16,7 @@ export interface TaskOptions {
   stdout: boolean;
   stderr: boolean;
   problemMatcher: ProblemMatcherConfig | undefined;
+  watch: string | string[] | undefined;
 }
 
 export class Task extends EventEmitter {
@@ -23,6 +25,7 @@ export class Task extends EventEmitter {
   problemMatcher: ProblemMatcher | undefined;
 
   private process: ChildProcess | undefined;
+  private restartScheduleTimer: NodeJS.Timer | undefined;
 
   constructor(
     public name: string,
@@ -41,6 +44,16 @@ export class Task extends EventEmitter {
     if (options.problemMatcher) {
       this.problemMatcher = new ProblemMatcher(options.problemMatcher, options.cwd);
       this.problemMatcher.on('problems-update', () => this.emit('problems-update'));
+    }
+
+    if (options.watch) {
+      let watcher = Chokidar
+        .watch(options.watch, {
+          cwd: options.cwd,
+        })
+        .on('ready', () => {
+          watcher.on('all', () => this.scheduleRestart());
+        });
     }
   }
 
@@ -131,5 +144,16 @@ export class Task extends EventEmitter {
       this.emit('stop');
       this.running = false;
     }
+  }
+
+  private scheduleRestart(): void {
+    clearTimeout(this.restartScheduleTimer!);
+
+    this.restartScheduleTimer = setTimeout(async () => {
+      if (this.running) {
+        this.emit('restarting-on-change');
+        await this.restart();
+      }
+    }, 1000);
   }
 }

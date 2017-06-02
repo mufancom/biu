@@ -182,6 +182,16 @@ socket.on('stop', data => {
   updateAllOperationsVisibility();
 });
 
+socket.on('restarting-on-change', data => {
+  let taskData = taskDataMap.get(data.id);
+
+  if (!taskData) {
+    return;
+  }
+
+  taskData.block.append('Restarting on change...\n');
+});
+
 socket.on('error', data => {
   let taskData = taskDataMap.get(data.id);
 

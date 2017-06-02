@@ -77,6 +77,7 @@ export class Server extends EventEmitter {
           stdout: !!options.stdout,
           stderr: !!options.stderr,
           problemMatcher: problemMatcherConfig,
+          watch: options.watch,
         },
       );
 
@@ -198,6 +199,7 @@ export class Server extends EventEmitter {
   private initializeTask(id: string, task: Task): void {
     task.on('start', () => this.room.emit('start', { id }));
     task.on('stop', () => this.room.emit('stop', { id }));
+    task.on('restarting-on-change', () => this.room.emit('restarting-on-change', { id }));
 
     task.on('error', (error: any) => {
       error = error instanceof Error ?

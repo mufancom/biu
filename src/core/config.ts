@@ -22,6 +22,7 @@ export interface TaskConfig {
   cwd?: string;
   stdout?: boolean;
   stderr?: boolean;
+  watch?: string | string[];
   problemMatcher?: string | ProblemMatcherConfig;
 }
 

@@ -35,29 +35,30 @@ button.green:hover {
 }
 
 #navbar {
-  margin: 0 5px;
+  margin: 0 auto 5px auto;
+  display: table;
+  width: calc(100% - 10px);
   line-height: 20px;
-  text-align: right;
   overflow: hidden;
 }
 
 #groups-wrapper,
 #tasks-wrapper {
-  margin-bottom: 10px;
-  float: left;
+  display: table-row;
 }
 
-#group-list,
-#task-list {
-  display: inline;
+#groups-wrapper > *,
+#tasks-wrapper > * {
+  padding: 2px 4px;
+  display: table-cell;
 }
 
-#tasks-wrapper {
-  margin-left: 10px;
+#groups-wrapper > label,
+#tasks-wrapper > label {
+  width: 1%;
 }
 
 #close-all-button {
-  margin-bottom: 10px;
   float: right;
 }
 
@@ -79,7 +80,6 @@ button.green:hover {
 .output-block {
   position: relative;
   margin: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   border-radius: 2px;
   overflow: hidden;
 }

@@ -9,14 +9,16 @@
 <body>
   <div id="navbar">
     <div id="groups-wrapper">
-      <b>Groups</b>
+      <label>Groups</label>
       <div id="group-list"></div>
     </div>
     <div id="tasks-wrapper">
-      <b>Tasks</b>
-      <div id="task-list"></div>
+      <label>Tasks</label>
+      <div>
+        <button id="close-all-button" class="red">close all</button>
+        <div id="task-list"></div>
+      </div>
     </div>
-    <button id="close-all-button" class="red">close all</button>
   </div>
   <div id="outputs-wrapper"></div>
   <div id="disconnected-mask" style="display: none;">

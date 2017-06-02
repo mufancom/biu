@@ -16,9 +16,15 @@ groupList.addEventListener('click', event => {
 
   let name = target.getAttribute('data-name');
 
+  let createdTaskNameSet = new Set(
+    Array.from(taskDataMap.values())
+      .map(taskData => taskData.task.name),
+  );
+
   socket.emit('create', {
-    names: taskGroupMap.get(name),
-    closeAll: true,
+    names: taskGroupMap.get(name)
+      .filter(name => !createdTaskNameSet.has(name)),
+    closeAll: false,
   });
 });
 
@@ -30,11 +36,26 @@ taskList.addEventListener('click', event => {
   }
 
   let name = target.getAttribute('data-name');
+  let id = target.getAttribute('data-id');
 
-  socket.emit('create', {
-    names: [name],
-    closeAll: false,
-  });
+  if (id) {
+    let taskData = taskDataMap.get(id);
+
+    if (!taskData) {
+      return;
+    }
+
+    if (taskData.task.running) {
+      return;
+    }
+
+    socket.emit('start', { id });
+  } else {
+    socket.emit('create', {
+      names: [name],
+      closeAll: false,
+    });
+  }
 });
 
 closeAllButton.addEventListener('click', () => {
@@ -117,6 +138,9 @@ socket.on('close', data => {
   }
 
   taskData.block.remove();
+  taskData.button.removeAttribute('data-id');
+  updateTaskButtonState(data.id, []);
+  taskDataMap.delete(data.id);
 });
 
 socket.on('start', data => {
@@ -129,6 +153,7 @@ socket.on('start', data => {
   taskData.task.running = true;
   taskData.block.setState('running');
   taskData.block.append('Task started.\n');
+  updateTaskButtonState(data.id, ['created', 'running']);
 });
 
 socket.on('stop', data => {
@@ -140,6 +165,7 @@ socket.on('stop', data => {
 
   taskData.task.running = false;
   taskData.block.setState('stopped');
+  updateTaskButtonState(data.id, ['created']);
 });
 
 socket.on('error', data => {
@@ -189,6 +215,9 @@ socket.on('stderr', data => {
 function appendTask(task) {
   let block = new OutputBlock(task.id, task.line);
 
+  let button = document.querySelector(`#task-list button[data-name="${task.name}"]`);
+  button.setAttribute('data-id', task.id);
+
   block.setState(task.running ? 'running' : 'stopped');
 
   outputsWrapper.appendChild(block.wrapper);
@@ -196,7 +225,23 @@ function appendTask(task) {
   taskDataMap.set(task.id, {
     task,
     block,
+    button,
   });
 
+  updateTaskButtonState(task.id, task.running ? ['created', 'running'] : ['created']);
+
   return block;
+}
+
+function updateTaskButtonState(id, states) {
+  let taskData = taskDataMap.get(id);
+
+  if (!taskData) {
+    return;
+  }
+
+  let button = taskData.button;
+
+  button.classList.remove('created', 'running');
+  button.classList.add(...states);
 }

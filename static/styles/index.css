@@ -34,6 +34,20 @@ button.green:hover {
   background-color: #4c0;
 }
 
+button.created::before {
+  content: '○';
+  margin: 0 4px 0 -2px;
+}
+
+button.created.running:hover {
+  background-color: #3b0;
+  cursor: default;
+}
+
+button.created.running::before {
+  content: '●';
+}
+
 #navbar {
   margin: 0 auto 5px auto;
   display: table;

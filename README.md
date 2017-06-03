@@ -4,6 +4,12 @@ Biu is a simple command-line tool for running multiple command-line tasks at the
 
 ![image](https://cloud.githubusercontent.com/assets/970430/26506654/fcafead6-427f-11e7-946c-4090bf8117d9.png)
 
+## Features
+
+- Start tasks in a group with one click.
+- Selectively pipe stdout and stderr of specific tasks.
+- Aggregate problems from several tasks with different problem matchers.
+
 ## Installation
 
 ```sh
@@ -28,44 +34,156 @@ The configuration contains two field: `tasks` and `groups`. And here's an exampl
 
 ```json
 {
+  "problemMatchers": {
+    "typescript-tsc": {
+      "owner": "typescript",
+      "pattern": {
+        "regexp": "^([^\\s].*)\\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\):\\s+(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$",
+        "file": 1,
+        "location": 2,
+        "severity": 3,
+        "code": 4,
+        "message": 5
+      },
+      "watching": {
+        "activeOnStart": true,
+        "beginsPattern": "^\\s*(?:message TS6032:|\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM)? -) File change detected\\. Starting incremental compilation\\.\\.\\.",
+        "endsPattern": "^\\s*(?:message TS6042:|\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM)? -) Compilation complete\\. Watching for file changes\\."
+      }
+    },
+    "typescript-ng-cli": {
+      "owner": "typescript",
+      "pattern": {
+        "regexp": "^(ERROR|WARNING) in (.+\\.ts) \\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\): (.+)$",
+        "severity": 1,
+        "file": 2,
+        "location": 3,
+        "message": 4
+      },
+      "watching": {
+        "activeOnStart": true,
+        "beginsPattern": "webpack: Compiling...",
+        "endsPattern": "webpack: (?:Compiled successfully|Compiled with warnings|Failed to compile)."
+      }
+    },
+    "typescript-at-loader": {
+      "owner": "typescript",
+      "pattern": [
+        {
+          "regexp": "^(ERROR) in \\[at-loader\\] (.+\\.ts):(\\d+|\\d+:\\d+)\\s*$",
+          "severity": 1,
+          "file": 2,
+          "location": 3
+        },
+        {
+          "regexp": "^\\s+(TS\\d+): (.+)$",
+          "code": 1,
+          "message": 2
+        }
+      ],
+      "watching": {
+        "beginsPattern": "^\\[at-loader\\] Checking started in a separate process\\.\\.\\.$"
+      }
+    }
+  },
   "tasks": {
     "start-app": {
-      "executable": "npm",
+      "executable": "ng",
       "args": [
-        "run", "start:app:hmr"
+        "serve", "--hmr", "-e=hmr"
       ],
-      "stdout": false
+      "problemMatcher": "typescript-ng-cli"
     },
     "start-server": {
-      "executable": "npm",
+      "executable": "node",
       "args": [
-        "run", "start:server"
+        "bld/server/main.js"
       ],
-      "stdout": false
+      "watch": [
+        "bld/server/*.js",
+        "bld/server/modules/**/*.js"
+      ]
+    },
+    "build-app": {
+      "executable": "ng",
+      "args": [
+        "build"
+      ]
     },
     "build-server": {
-      "executable": "npm",
+      "executable": "tsc",
       "args": [
-        "run", "build:server:tsc", "--", "-w"
+        "-p", "src/server",
+        "-w"
       ],
-      "stdout": true
+      "problemMatcher": "typescript-tsc"
     },
     "build-website-desktop": {
-      "executable": "npm",
+      "executable": "webpack",
+      "cwd": "src/website",
       "args": [
-        "run", "build:website:desktop"
+        "--env.TARGET", "desktop",
+        "--env.ENV", "dev",
+        "--env.WATCH"
       ],
-      "stdout": false
+      "problemMatcher": "typescript-at-loader"
+    },
+    "build-website-libs": {
+      "executable": "webpack",
+      "cwd": "src/website",
+      "args": [
+        "--env.TARGET", "libs",
+        "--env.ENV", "dev"
+      ]
     }
   },
   "groups": {
     "app": ["start-app", "start-server", "build-server", "build-website-desktop"],
-    "server": ["start-server", "build-server", "build-website-desktop"]
+    "server": ["build-app", "start-server", "build-server", "build-website-desktop"]
   }
 }
 ```
 
 Checkout [config.ts](src/core/config.ts) for options supported.
+
+### VS Code Problem Matcher Support
+
+To make the aggregated problem matcher output work in VS Code, you'll need to define biu as a task and configure proper problem matcher options in `tasks.json`:
+
+```json
+{
+  "version": "0.1.0",
+  "tasks": [
+    {
+      "taskName": "biu",
+      "command": "npm",
+      "isShellCommand": true,
+      "isBackground": true,
+      "isBuildCommand": true,
+      "args": ["run", "biu"],
+      "showOutput": "silent",
+      "problemMatcher": {
+        "owner": "typescript",
+        "fileLocation": "absolute",
+        "applyTo": "closedDocuments",
+        "pattern": {
+          "regexp": "^\\[biu-problem;([^;]*);([^;]*);([^;]*);([^;]*);(.*)\\]$",
+          "severity": 1,
+          "file": 2,
+          "location": 3,
+          "code": 4,
+          "message": 5
+        },
+        "watching": {
+          "activeOnStart": false,
+          "beginsPattern": "^\\[biu-problems;typescript;begin\\]$",
+          "endsPattern": "^\\[biu-problems;typescript;end\\]$"
+        }
+      }
+    }
+  ]
+}
+```
 
 ## License
 

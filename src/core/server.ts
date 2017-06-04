@@ -13,6 +13,7 @@ import * as v from 'villa';
 
 import {
   Task,
+  TaskExitEventData,
   TaskProblemsUpdateEventData,
 } from './task';
 
@@ -82,6 +83,7 @@ export class Server extends EventEmitter {
           stderr: !!options.stderr,
           problemMatcher: problemMatcherConfig,
           watch: options.watch,
+          closeOnExit: !!options.closeOnExit,
         },
       );
 
@@ -207,7 +209,13 @@ export class Server extends EventEmitter {
       this.room.emit('error', { id, error });
     });
 
-    task.on('exit', (code: number) => this.room.emit('exit', { id, code }));
+    task.on('exit', async (data: TaskExitEventData) => {
+      this.room.emit('exit', { id, code: data.code });
+
+      if (data.close) {
+        await this.close(id);
+      }
+    });
 
     task.on('stdout', (data: Buffer) => {
       this.room.emit('stdout', {

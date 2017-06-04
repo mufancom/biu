@@ -12,6 +12,11 @@ import { ProblemMatcher } from './problem-matcher';
 // tslint:disable-next-line:no-unbound-method
 const which = whichBuilder(process.cwd()).sync;
 
+export interface TaskExitEventData {
+  code: number;
+  close: boolean;
+}
+
 export interface TaskProblemsUpdateEventData {
   owner: string;
 }
@@ -22,6 +27,7 @@ export interface TaskOptions {
   stderr: boolean;
   problemMatcher: ProblemMatcherConfig | ProblemMatcherConfig[] | undefined;
   watch: string | string[] | undefined;
+  closeOnExit: boolean;
 }
 
 export class Task extends EventEmitter {
@@ -174,7 +180,7 @@ export class Task extends EventEmitter {
     if (error) {
       this.emit('error', error);
     } else {
-      this.emit('exit', code);
+      this.emit('exit', { code, close: this.options.closeOnExit });
     }
 
     if (this.running) {

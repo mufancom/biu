@@ -167,7 +167,7 @@ To make the aggregated problem matcher output work in VS Code, you'll need to de
         "fileLocation": "absolute",
         "applyTo": "closedDocuments",
         "pattern": {
-          "regexp": "^\\[biu-problem;([^;]*);([^;]*);([^;]*);([^;]*);(.*)\\]$",
+          "regexp": "^\\[biu-problem:typescript:([^;]*);([^;]*);([^;]*);([^;]*);(.*)\\]$",
           "severity": 1,
           "file": 2,
           "location": 3,
@@ -176,8 +176,8 @@ To make the aggregated problem matcher output work in VS Code, you'll need to de
         },
         "watching": {
           "activeOnStart": false,
-          "beginsPattern": "^\\[biu-problems;typescript;begin\\]$",
-          "endsPattern": "^\\[biu-problems;typescript;end\\]$"
+          "beginsPattern": "^\\[biu-problems:typescript:begin\\]$",
+          "endsPattern": "^\\[biu-problems:typescript:end\\]$"
         }
       }
     }

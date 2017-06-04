@@ -13,7 +13,7 @@ export interface ProblemMatcherWatchingConfig {
 export interface ProblemMatcherConfig {
   owner: string;
   pattern: ProblemMatcherPatternConfig | ProblemMatcherPatternConfig[];
-  watching: ProblemMatcherWatchingConfig;
+  watching?: ProblemMatcherWatchingConfig;
 }
 
 export interface TaskConfig {

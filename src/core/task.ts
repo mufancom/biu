@@ -80,6 +80,12 @@ export class Task extends EventEmitter {
       return false;
     }
 
+    if (this.problemMatcherMap) {
+      for (let [_, matcher] of this.problemMatcherMap) {
+        matcher.reset();
+      }
+    }
+
     this.emit('start');
     this.running = true;
 
@@ -156,6 +162,14 @@ export class Task extends EventEmitter {
   }
 
   private handleStop(error: any, code?: number): void {
+    if (this.problemMatcherMap) {
+      for (let [_, matcher] of this.problemMatcherMap) {
+        if (!matcher.watching) {
+          this.emit('problems-update', { owner: matcher.owner });
+        }
+      }
+    }
+
     if (error) {
       this.emit('error', error);
     } else {

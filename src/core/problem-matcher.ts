@@ -31,18 +31,17 @@ export interface Problem {
 }
 
 export class ProblemMatcher extends EventEmitter {
-  patternIndex = 0;
-  patterns: ProblemMatcherPattern[];
-  watching: ProblemMatcherWatchingConfig;
+  patternIndex: number;
+  pendingOutput: string;
+  active: boolean;
+  problems: Problem[];
 
-  pendingOutput = '';
+  patterns: ProblemMatcherPattern[];
+  watching: ProblemMatcherWatchingConfig | undefined;
 
   owner: string;
-  active: boolean;
   beginsRegex: RegExp | undefined;
   endsRegex: RegExp | undefined;
-
-  problems: Problem[];
 
   private problemsUpdateEventTimer: NodeJS.Timer | undefined;
   private loopedPattern: ProblemMatcherPattern | undefined;
@@ -66,24 +65,29 @@ export class ProblemMatcher extends EventEmitter {
     let watching = this.watching = config.watching;
 
     this.owner = config.owner;
-    this.active = watching.activeOnStart;
 
-    if (watching.beginsPattern) {
-      this.beginsRegex = new RegExp(watching.beginsPattern);
-    } else {
-      this.active = true;
-    }
+    if (watching) {
+      if (watching.beginsPattern) {
+        this.beginsRegex = new RegExp(watching.beginsPattern);
+      }
 
-    if (watching.endsPattern) {
-      this.endsRegex = new RegExp(watching.endsPattern);
+      if (watching.endsPattern) {
+        this.endsRegex = new RegExp(watching.endsPattern);
+      }
     }
 
     this.reset();
   }
 
   reset(): void {
+    clearTimeout(this.problemsUpdateEventTimer!);
+
     this.problems = [];
     this.pendingOutput = '';
+    this.patternIndex = 0;
+
+    let watching = this.watching;
+    this.active = !watching || !watching.beginsPattern || watching.activeOnStart;
   }
 
   match(line: string): void {
@@ -115,7 +119,7 @@ export class ProblemMatcher extends EventEmitter {
       if (this.endsRegex.test(line)) {
         this.emit('problems-update');
       }
-    } else {
+    } else if (this.watching) {
       throw new ExpectedError('At least one of "beginsPattern" and "endsPattern" is required');
     }
 
@@ -185,7 +189,7 @@ export class ProblemMatcher extends EventEmitter {
     }
 
     if (this.patternIndex === 0) {
-      this.pushProblem(!this.endsRegex);
+      this.pushProblem(!!this.watching && !this.endsRegex);
     }
   }
 

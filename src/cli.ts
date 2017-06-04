@@ -8,12 +8,15 @@ import * as Util from 'util';
 
 import { CLI, Shim } from 'clime';
 
-process.on('uncaughtException', (error: any) => {
-  process.stderr.write(`${Util.inspect(error)}\n`);
-  process.exit(1);
-});
+process.on('uncaughtException', exitWithError);
+process.on('unhandledRejection', exitWithError);
 
 let cli = new CLI('biu', Path.join(__dirname, 'commands'));
 
 let shim = new Shim(cli);
-shim.execute(process.argv);
+shim.execute(process.argv).catch(exitWithError);
+
+function exitWithError(error: any): void {
+  process.stderr.write(`${Util.inspect(error)}\n`);
+  process.exit(1);
+}

@@ -185,13 +185,13 @@ export class Server extends EventEmitter {
       }
     }
 
-    process.stdout.write(`[biu-problems;${owner};begin]\n`);
+    process.stdout.write(`[biu-problems:${owner}:begin]\n`);
 
     for (let line of lineSet) {
-      process.stdout.write(`[biu-problem;${line}]\n`);
+      process.stdout.write(`[biu-problem:${owner}:${line}]\n`);
     }
 
-    process.stdout.write(`[biu-problems;${owner};end]\n`);
+    process.stdout.write(`[biu-problems:${owner}:end]\n`);
   }
 
   private initializeTask(id: string, task: Task): void {

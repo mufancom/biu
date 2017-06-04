@@ -83,7 +83,7 @@ export class Server extends EventEmitter {
           stderr: !!options.stderr,
           problemMatcher: problemMatcherConfig,
           watch: options.watch,
-          closeOnExit: !!options.closeOnExit,
+          autoClose: !!options.autoClose,
         },
       );
 

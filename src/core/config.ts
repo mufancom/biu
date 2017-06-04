@@ -24,7 +24,7 @@ export interface TaskConfig {
   stderr?: boolean;
   watch?: string | string[];
   problemMatcher?: string | ProblemMatcherConfig;
-  closeOnExit?: boolean;
+  autoClose?: boolean;
 }
 
 export interface Config {

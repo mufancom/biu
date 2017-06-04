@@ -27,7 +27,7 @@ export interface TaskOptions {
   stderr: boolean;
   problemMatcher: ProblemMatcherConfig | ProblemMatcherConfig[] | undefined;
   watch: string | string[] | undefined;
-  closeOnExit: boolean;
+  autoClose: boolean;
 }
 
 export class Task extends EventEmitter {
@@ -180,7 +180,10 @@ export class Task extends EventEmitter {
     if (error) {
       this.emit('error', error);
     } else {
-      this.emit('exit', { code, close: this.options.closeOnExit });
+      this.emit('exit', {
+        code,
+        close: this.options.autoClose && code === 0,
+      });
     }
 
     if (this.running) {

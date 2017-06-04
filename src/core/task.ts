@@ -11,18 +11,22 @@ import { ProblemMatcher } from './problem-matcher';
 
 const which = whichBuilder(process.cwd()).sync;
 
+export interface TaskProblemsUpdateEventData {
+  owner: string;
+}
+
 export interface TaskOptions {
   cwd: string;
   stdout: boolean;
   stderr: boolean;
-  problemMatcher: ProblemMatcherConfig | undefined;
+  problemMatcher: ProblemMatcherConfig | ProblemMatcherConfig[] | undefined;
   watch: string | string[] | undefined;
 }
 
 export class Task extends EventEmitter {
   path: string;
   running = false;
-  problemMatcher: ProblemMatcher | undefined;
+  problemMatcherMap: Map<string, ProblemMatcher> | undefined;
 
   private process: ChildProcess | undefined;
   private restartScheduleTimer: NodeJS.Timer | undefined;
@@ -42,8 +46,18 @@ export class Task extends EventEmitter {
     }
 
     if (options.problemMatcher) {
-      this.problemMatcher = new ProblemMatcher(options.problemMatcher, options.cwd);
-      this.problemMatcher.on('problems-update', () => this.emit('problems-update'));
+      let configs = Array.isArray(options.problemMatcher) ? options.problemMatcher : [options.problemMatcher];
+
+      this.problemMatcherMap = new Map(
+        configs.map<[string, ProblemMatcher]>(config => {
+          let matcher = new ProblemMatcher(config, options.cwd);
+          let owner = matcher.owner;
+
+          matcher.on('problems-update', () => this.emit('problems-update', { owner }));
+
+          return [owner, matcher];
+        }),
+      );
     }
 
     if (options.watch) {
@@ -82,16 +96,24 @@ export class Task extends EventEmitter {
     this.process.once('exit', code => this.handleStop(undefined, code));
 
     this.process.stdout.on('data', (data: Buffer) => {
-      if (this.problemMatcher) {
-        this.problemMatcher.push(data);
+      let map = this.problemMatcherMap;
+
+      if (map) {
+        for (let [_, matcher] of map) {
+          matcher.push(data);
+        }
       }
 
       this.emit('stdout', data);
     });
 
     this.process.stderr.on('data', (data: Buffer) => {
-      if (this.problemMatcher) {
-        this.problemMatcher.push(data);
+      let map = this.problemMatcherMap;
+
+      if (map) {
+        for (let [_, matcher] of map) {
+          matcher.push(data);
+        }
       }
 
       this.emit('stderr', data);

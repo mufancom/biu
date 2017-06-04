@@ -11,8 +11,12 @@ import * as express from 'express';
 import * as socketIO from 'socket.io';
 import * as v from 'villa';
 
+import {
+  Task,
+  TaskProblemsUpdateEventData,
+} from './task';
+
 import { Config } from './config';
-import { Task } from './task';
 
 const ansiConverter = new AnsiConverter();
 
@@ -160,18 +164,14 @@ export class Server extends EventEmitter {
     this.io.on('connection', socket => this.initializeConnection(socket));
   }
 
-  private outputProblems(): void {
-    let lineSetMap = new Map<string, Set<string>>();
+  private outputProblems(owner: string): void {
+    let lineSet = new Set<string>();
 
-    for (let [_, { problemMatcher }] of this.taskMap) {
+    for (let [_, { problemMatcherMap }] of this.taskMap) {
+      let problemMatcher = problemMatcherMap && problemMatcherMap.get(owner);
+
       if (!problemMatcher) {
         continue;
-      }
-
-      let lineSet = lineSetMap.get(problemMatcher.owner);
-
-      if (!lineSet) {
-        lineSetMap.set(problemMatcher.owner, lineSet = new Set<string>());
       }
 
       for (let problem of problemMatcher.problems) {
@@ -185,15 +185,13 @@ export class Server extends EventEmitter {
       }
     }
 
-    for (let [owner, lineSet] of lineSetMap) {
-      process.stdout.write(`[biu-problems;${owner};begin]\n`);
+    process.stdout.write(`[biu-problems;${owner};begin]\n`);
 
-      for (let line of lineSet) {
-        process.stdout.write(`[biu-problem;${line}]\n`);
-      }
-
-      process.stdout.write(`[biu-problems;${owner};end]\n`);
+    for (let line of lineSet) {
+      process.stdout.write(`[biu-problem;${line}]\n`);
     }
+
+    process.stdout.write(`[biu-problems;${owner};end]\n`);
   }
 
   private initializeTask(id: string, task: Task): void {
@@ -225,7 +223,9 @@ export class Server extends EventEmitter {
       });
     });
 
-    task.on('problems-update', () => this.outputProblems());
+    task.on('problems-update', (data: TaskProblemsUpdateEventData) => {
+      this.outputProblems(data.owner);
+    });
   }
 
   private initializeConnection(socket: SocketIO.Socket): void {

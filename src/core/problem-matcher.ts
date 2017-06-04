@@ -168,24 +168,29 @@ export class ProblemMatcher extends EventEmitter {
 
     let activeMatch = this.activeMatch;
 
-    if (pattern.severity && groups[pattern.severity]) {
-      activeMatch.severity = groups[pattern.severity];
+    let severity = resolveCapture(groups, pattern.severity);
+    if (severity !== undefined) {
+      activeMatch.severity = severity;
     }
 
-    if (pattern.file && groups[pattern.file]) {
-      activeMatch.file = Path.resolve(this.cwd, groups[pattern.file]);
+    let file = resolveCapture(groups, pattern.file);
+    if (file !== undefined) {
+      activeMatch.file = Path.resolve(this.cwd, file);
     }
 
-    if (pattern.location && groups[pattern.location]) {
-      activeMatch.location = groups[pattern.location];
+    let location = resolveCapture(groups, pattern.location);
+    if (location !== undefined) {
+      activeMatch.location = location;
     }
 
-    if (pattern.code && groups[pattern.code]) {
-      activeMatch.code = groups[pattern.code];
+    let code = resolveCapture(groups, pattern.code);
+    if (code !== undefined) {
+      activeMatch.code = code;
     }
 
-    if (pattern.message && groups[pattern.message]) {
-      activeMatch.message = groups[pattern.message];
+    let message = resolveCapture(groups, pattern.message);
+    if (message !== undefined) {
+      activeMatch.message = message;
     }
 
     if (this.patternIndex === 0) {
@@ -228,4 +233,19 @@ export class ProblemMatcher extends EventEmitter {
       this.emit('problems-update');
     }, 200);
   }
+}
+
+function resolveCapture(groups: RegExpExecArray, index: number | string | undefined): string | undefined {
+  if (index === undefined) {
+    return undefined;
+  }
+
+  if (typeof index === 'number') {
+    return groups[index];
+  }
+
+  return index.replace(/\$(&|\d+)/g, (text, indexStr: string) => {
+    let str = groups[indexStr === '&' ? 0 : Number(indexStr)] as string | undefined;
+    return typeof str === 'string' ? str : text;
+  });
 }

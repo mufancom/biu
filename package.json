@@ -49,6 +49,7 @@
     "@types/socket.io": "^1.4.29",
     "rimraf": "^2.6.1",
     "tslint": "^5.4.2",
+    "tslint-language-service": "^0.9.6",
     "typescript": "^2.3.4",
     "vts": "^5.4.1"
   }

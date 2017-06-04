@@ -9,6 +9,7 @@ import * as v from 'villa';
 import { ProblemMatcherConfig } from './config';
 import { ProblemMatcher } from './problem-matcher';
 
+// tslint:disable-next-line:no-unbound-method
 const which = whichBuilder(process.cwd()).sync;
 
 export interface TaskProblemsUpdateEventData {
@@ -152,7 +153,7 @@ export class Task extends EventEmitter {
 
   async stopWait(): Promise<void> {
     if (this.stop()) {
-      return await v.awaitable(this, 'stop');
+      await v.awaitable(this, 'stop');
     }
   }
 

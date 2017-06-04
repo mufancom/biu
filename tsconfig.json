@@ -11,7 +11,12 @@
     "skipDefaultLibCheck": true,
     "newLine": "LF",
     "rootDir": "src",
-    "outDir": "bld"
+    "outDir": "bld",
+    "plugins": [
+      {
+        "name": "tslint-language-service"
+      }
+    ]
   },
   "exclude": [
     "bld",

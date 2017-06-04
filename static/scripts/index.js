@@ -14,18 +14,38 @@ groupList.addEventListener('click', event => {
     return;
   }
 
-  let name = target.getAttribute('data-name');
+  let groupName = target.getAttribute('data-name');
 
-  let createdTaskNameSet = new Set(
+  let taskMap = new Map(
     Array.from(taskDataMap.values())
-      .map(taskData => taskData.task.name),
+      .map(({ task }) => [task.name, task]),
   );
 
-  socket.emit('create', {
-    names: taskGroupMap.get(name)
-      .filter(name => !createdTaskNameSet.has(name)),
-    closeAll: false,
-  });
+  let namesOfTasksToCreate = [];
+  let idsOfTasksToStart = [];
+
+  for (let taskName of taskGroupMap.get(groupName)) {
+    if (!taskMap.has(taskName)) {
+      namesOfTasksToCreate.push(taskName);
+    } else {
+      let task = taskMap.get(taskName);
+
+      if (!task.running) {
+        idsOfTasksToStart.push(task.id);
+      }
+    }
+  }
+
+  if (namesOfTasksToCreate.length) {
+    socket.emit('create', {
+      names: namesOfTasksToCreate,
+      closeAll: false,
+    });
+  }
+
+  for (let id of idsOfTasksToStart) {
+    socket.emit('start', { id });
+  }
 });
 
 taskList.addEventListener('click', event => {

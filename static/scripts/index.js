@@ -211,7 +211,7 @@ socket.on('exit', data => {
 
   let text = data.code ?
     `[biu] Task exited with code ${data.code}.\n` :
-    `[biu] Task exited.`;
+    '[biu] Task exited.\n';
 
   taskData.block.append(text);
 });

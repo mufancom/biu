@@ -28,12 +28,13 @@ biu --help
 
 ## Configuration
 
-Biu loads configuration from a Node.js module, it could either be a `.js` or `.json` file. By default, it tries to require `.biu` from the current working directory.
+Biu loads configuration from a Node.js module, it could either be a `.js` or `.json` file. By default, it tries to require `.biu`, or read `scripts` section of `package.json` from the current working directory.
 
 The configuration contains two field: `tasks` and `groups`. And here's an example:
 
-```json
-{
+`.biu`
+```javascript
+module.exports = {
   "problemMatchers": {
     "typescript-tsc": {
       "owner": "typescript",
@@ -145,6 +146,10 @@ The configuration contains two field: `tasks` and `groups`. And here's an exampl
 ```
 
 Checkout [config.ts](src/core/config.ts) for options supported.
+
+#### package.json `script` section support 
+
+If biu read information from `package.json`, it will convert all keys in `scripts` section into `tasks` configuration. And if you add `biu-groups` section into your `package.json`, biu will read it as `groups` configuration.
 
 ### VS Code Problem Matcher Support
 

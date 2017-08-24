@@ -133,6 +133,7 @@ socket.on('initialize', data => {
     groupList.appendChild(groupsFragment);
   } else {
     groupList.innerHTML = 'none';
+    groupList.parentNode.remove();
   }
 
   let tasksFragment = document.createDocumentFragment();

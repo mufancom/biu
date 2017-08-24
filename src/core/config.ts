@@ -28,7 +28,7 @@ export interface TaskConfig {
 }
 
 export interface Config {
-  problemMatchers: Dictionary<ProblemMatcherConfig>;
+  problemMatchers: Dictionary<ProblemMatcherConfig> | undefined;
   tasks: Dictionary<TaskConfig>;
-  groups: Dictionary<string[]>;
+  groups: Dictionary<string[]> | undefined;
 }

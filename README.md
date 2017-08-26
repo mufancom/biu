@@ -15,9 +15,11 @@ Biu is a simple command-line tool for running multiple command-line tasks at the
 ```sh
 # global
 npm install biu --global
+yarn global add biu
 
 # local
 npm install biu --save-dev
+yarn add biu --dev
 ```
 
 ## Usage
@@ -28,13 +30,14 @@ biu --help
 
 ## Configuration
 
-Biu loads configuration from a Node.js module, it could either be a `.js` or `.json` file. By default, it tries to require `.biu`, or read `scripts` section of `package.json` from the current working directory.
+Biu loads configuration from a Node.js module, it could either be a `.js` or `.json` file. By default, it tries to require `.biu`, or read `scripts` section of `package.json` from the current working directory if no configuration file is specified and the default `.biu` (`.js`, `.json`) does not exist.
 
-The configuration contains two field: `tasks` and `groups`. And here's an example:
+The configuration contains three fields: `problemMatchers`, `tasks` (required) and `groups`. And here's an example:
 
-`.biu`
-```javascript
-module.exports = {
+**.biu.json**
+
+```json
+{
   "problemMatchers": {
     "typescript-tsc": {
       "owner": "typescript",
@@ -147,9 +150,9 @@ module.exports = {
 
 Checkout [config.ts](src/core/config.ts) for options supported.
 
-#### package.json `script` section support 
+#### package.json `scripts` section support
 
-If biu read information from `package.json`, it will convert all keys in `scripts` section into `tasks` configuration. And if you add `biu-groups` section into your `package.json`, biu will read it as `groups` configuration.
+If biu read configuration from `package.json`, it will convert all keys in `scripts` section into `tasks` configuration. And if you add `biuGroups`, `biu-groups` or `groups` under `biu` section into your `package.json`, biu will read it as `groups` configuration.
 
 ### VS Code Problem Matcher Support
 
@@ -179,7 +182,7 @@ To make the aggregated problem matcher output work in VS Code, you'll need to de
           "code": 4,
           "message": 5
         },
-        "watching": {
+        "background": {
           "activeOnStart": false,
           "beginsPattern": "^\\[biu-problems:typescript:begin\\]$",
           "endsPattern": "^\\[biu-problems:typescript:end\\]$"

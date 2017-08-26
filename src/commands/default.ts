@@ -3,6 +3,8 @@ import * as Path from 'path';
 import {
   Castable,
   Command,
+  Context,
+  ExpectedError,
   Options,
   command,
   option,
@@ -11,7 +13,7 @@ import {
 
 import * as open from 'open';
 
-import { Config } from '../core/config';
+import { Config, readConfigFromPackageFile } from '../core/config';
 import { Server } from '../core/server';
 
 const log = console.log.bind(undefined);
@@ -38,48 +40,28 @@ export class BiuOptions extends Options {
 export default class extends Command {
   async execute(
     @param({
-      description: 'Task configuration file to require, default to `.biu` ' +
-        'or read `scripts` section from `package.json`.',
+      description: 'Task configuration file to require, default to `.biu`.',
       default: '.biu',
     })
     configFile: Castable.File,
 
     options: BiuOptions,
+
+    {cwd}: Context,
   ) {
     let config: Config;
-    try {
+
+    let configFilePath = await configFile.exists(['', '.js', '.json']);
+
+    if (configFilePath) {
       config = configFile.require<Config>();
-      log('Using', configFile.baseName);
-    } catch ( err ) {
-      let pkg;
-      try {
-        pkg = require(Path.resolve(process.cwd(), './package.json'));
-        log('Using', 'package.json');
-      } catch ( err ) {
-        return Promise.reject('Can not find `.biu` or `package.json`');
-      }
-      config = {
-        problemMatchers: undefined,
-        tasks: {},
-        groups: undefined,
-      };
-      let hasTask = false;
-      if (pkg && typeof pkg.scripts === 'object') {
-        Object.keys(pkg.scripts).map( task => {
-          config.tasks[task] = {
-            executable: 'npm',
-            args: ['run', task],
-          };
-          hasTask = true;
-        });
-      }
-      if (pkg && pkg['biu-groups'] && typeof pkg['biu-groups'] === 'object') {
-        config.groups = pkg['biu-groups'];
-      }
-      if (!hasTask) {
-        return Promise.reject('No scripts in package.json');
-      }
+    } else if (configFile.default) {
+      config = readConfigFromPackageFile(cwd);
+      log('Configuration loaded from "package.json".');
+    } else {
+      throw new ExpectedError(`Config file "${configFile.source}" (.js, .json) does not exist`);
     }
+
     let server = new Server(config, Path.dirname(configFile.fullName));
 
     await server.listen(options.port);

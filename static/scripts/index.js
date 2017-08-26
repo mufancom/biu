@@ -1,3 +1,4 @@
+const groupsWrapper = document.getElementById('groups-wrapper');
 const groupList = document.getElementById('group-list');
 const taskList = document.getElementById('task-list');
 const allOperationsWrapper = document.getElementById('all-operations-wrapper');
@@ -131,9 +132,10 @@ socket.on('initialize', data => {
     }
 
     groupList.appendChild(groupsFragment);
+    groupsWrapper.style.display = '';
   } else {
-    groupList.innerHTML = 'none';
-    groupList.parentNode.remove();
+    groupList.innerHTML = '';
+    groupsWrapper.style.display = 'none';
   }
 
   let tasksFragment = document.createDocumentFragment();

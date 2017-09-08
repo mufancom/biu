@@ -52,7 +52,7 @@ class OutputBlock {
 
   append(html) {
     let pre = this.pre;
-    let atBottom = pre.scrollHeight === pre.scrollTop + pre.clientHeight;
+    let atBottom = Math.abs(pre.scrollHeight - (pre.scrollTop + pre.clientHeight)) < 1;
 
     let temp = document.createElement('div');
     temp.innerHTML = html;

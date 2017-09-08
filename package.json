@@ -7,7 +7,7 @@
   },
   "scripts": {
     "lint": "tslint -c tslint.json -p tsconfig.json --type-check",
-    "build": "npm run lint && rimraf bld && tsc"
+    "build": "yarn lint && rimraf bld && tsc"
   },
   "repository": {
     "type": "git",

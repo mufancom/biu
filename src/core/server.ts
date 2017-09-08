@@ -206,7 +206,10 @@ export class Server extends EventEmitter {
         error.stack || error.message :
         `${error}`;
 
-      this.room.emit('error', { id, error });
+      this.room.emit('error', {
+        id,
+        error: encodeOutput(error),
+      });
     });
 
     task.on('exit', async (data: TaskExitEventData) => {
@@ -220,14 +223,14 @@ export class Server extends EventEmitter {
     task.on('stdout', (data: Buffer) => {
       this.room.emit('stdout', {
         id,
-        html: ansiConverter.toHtml(data.toString()),
+        html: ansiConverter.toHtml(encodeOutput(data.toString())),
       });
     });
 
     task.on('stderr', (data: Buffer) => {
       this.room.emit('stderr', {
         id,
-        html: ansiConverter.toHtml(data.toString()),
+        html: ansiConverter.toHtml(encodeOutput(data.toString())),
       });
     });
 
@@ -290,4 +293,11 @@ export class Server extends EventEmitter {
         }),
     });
   }
+}
+
+function encodeOutput(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }

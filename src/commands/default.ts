@@ -21,7 +21,7 @@ const log = console.log.bind(undefined);
 export class BiuOptions extends Options {
   @option({
     flag: 'p',
-    description: 'Port to listen, default to `8088`.',
+    description: 'Port to listen, defaults to `8088`.',
     default: 8088,
   })
   port: number;
@@ -40,7 +40,7 @@ export class BiuOptions extends Options {
 export default class extends Command {
   async execute(
     @param({
-      description: 'Task configuration file to require, default to `.biu`.',
+      description: 'Task configuration file to require, defaults to `.biu`.',
       default: '.biu',
     })
     configFile: Castable.File,

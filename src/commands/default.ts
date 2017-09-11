@@ -47,7 +47,7 @@ export default class extends Command {
 
     options: BiuOptions,
 
-    {cwd}: Context,
+    context: Context,
   ) {
     let config: Config;
 
@@ -56,7 +56,7 @@ export default class extends Command {
     if (configFilePath) {
       config = configFile.require<Config>();
     } else if (configFile.default) {
-      config = readConfigFromPackageFile(cwd);
+      config = readConfigFromPackageFile(context.cwd);
       log('Configuration loaded from "package.json".');
     } else {
       throw new ExpectedError(`Config file "${configFile.source}" (.js, .json) does not exist`);

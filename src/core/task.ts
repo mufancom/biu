@@ -68,13 +68,12 @@ export class Task extends EventEmitter {
     }
 
     if (options.watch) {
-      let watcher = Chokidar
+      Chokidar
         .watch(options.watch, {
           cwd: options.cwd,
+          ignoreInitial: true,
         })
-        .on('ready', () => {
-          watcher.on('all', () => this.scheduleRestart());
-        });
+        .on('all', () => this.scheduleRestart());
     }
   }
 

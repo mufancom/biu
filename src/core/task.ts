@@ -2,15 +2,12 @@ import { ChildProcess, spawn } from 'child_process';
 import { EventEmitter } from 'events';
 
 import * as Chokidar from 'chokidar';
-import * as whichBuilder from 'npm-which';
+import * as which from 'npm-which';
 import * as shellEscape from 'shell-escape';
 import * as v from 'villa';
 
 import { ProblemMatcherConfig } from './config';
 import { ProblemMatcher } from './problem-matcher';
-
-// tslint:disable-next-line:no-unbound-method
-const which = whichBuilder(process.cwd()).sync;
 
 export interface TaskExitEventData {
   code: number;
@@ -47,7 +44,7 @@ export class Task extends EventEmitter {
     super();
 
     try {
-      this.path = which(executable);
+      this.path = which(options.cwd).sync(executable);
     } catch (error) {
       this.path = executable;
     }

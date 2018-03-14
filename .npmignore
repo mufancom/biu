@@ -5,3 +5,7 @@
 /tslint.json
 
 .*
+
+*.js.map
+
+yarn.lock

@@ -10,7 +10,8 @@ import * as v from 'villa';
 
 import {Task, TaskExitEventData, TaskProblemsUpdateEventData} from './task';
 
-import {Config} from './config';
+import {builtInProblemMatcherDict} from '../problem-matchers';
+import {Config, ProblemMatcherConfig} from './config';
 
 const ansiConverter = new AnsiConverter();
 
@@ -52,7 +53,10 @@ export class Server extends EventEmitter {
       await this.closeAll();
     }
 
-    let problemMatcherDict = this.config.problemMatchers || {};
+    let problemMatcherDict: Dictionary<ProblemMatcherConfig> = {
+      ...builtInProblemMatcherDict,
+      ...this.config.problemMatchers,
+    };
 
     for (let name of taskNames) {
       let id = (++this.lastTaskId).toString();

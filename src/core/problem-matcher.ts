@@ -4,7 +4,7 @@ import * as Path from 'path';
 import {ExpectedError} from 'clime';
 import stripColor = require('strip-color');
 
-import {ProblemMatcherConfig, ProblemMatcherWatchingConfig} from './config';
+import {ProblemMatcherBackgroundConfig, ProblemMatcherConfig} from './config';
 
 export interface ProblemMatcherPatternBase {
   severity?: number;
@@ -34,7 +34,7 @@ export class ProblemMatcher extends EventEmitter {
   problems!: Problem[];
 
   patterns: ProblemMatcherPattern[];
-  watching: ProblemMatcherWatchingConfig | undefined;
+  background: ProblemMatcherBackgroundConfig | undefined;
 
   owner: string;
   beginsRegex: RegExp | undefined;
@@ -58,17 +58,17 @@ export class ProblemMatcher extends EventEmitter {
       };
     });
 
-    let watching = (this.watching = config.watching);
-
     this.owner = config.owner;
 
-    if (watching) {
-      if (watching.beginsPattern) {
-        this.beginsRegex = new RegExp(watching.beginsPattern);
+    let background = (this.background = config.background);
+
+    if (background) {
+      if (background.beginsPattern) {
+        this.beginsRegex = new RegExp(background.beginsPattern);
       }
 
-      if (watching.endsPattern) {
-        this.endsRegex = new RegExp(watching.endsPattern);
+      if (background.endsPattern) {
+        this.endsRegex = new RegExp(background.endsPattern);
       }
     }
 
@@ -82,9 +82,9 @@ export class ProblemMatcher extends EventEmitter {
     this.pendingOutput = '';
     this.patternIndex = 0;
 
-    let watching = this.watching;
+    let background = this.background;
     this.active =
-      !watching || !watching.beginsPattern || watching.activeOnStart;
+      !background || !background.beginsPattern || background.activeOnStart;
   }
 
   match(line: string): void {
@@ -116,7 +116,7 @@ export class ProblemMatcher extends EventEmitter {
       if (this.endsRegex.test(line)) {
         this.emit('problems-update');
       }
-    } else if (this.watching) {
+    } else if (this.background) {
       throw new ExpectedError(
         'At least one of "beginsPattern" and "endsPattern" is required',
       );
@@ -197,7 +197,7 @@ export class ProblemMatcher extends EventEmitter {
     }
 
     if (this.patternIndex === 0) {
-      this.pushProblem(!!this.watching && !this.endsRegex);
+      this.pushProblem(!!this.background && !this.endsRegex);
     }
   }
 

@@ -8,7 +8,7 @@ export interface ProblemMatcherPatternConfig extends ProblemMatcherPatternBase {
   regexp: string;
 }
 
-export interface ProblemMatcherWatchingConfig {
+export interface ProblemMatcherBackgroundConfig {
   activeOnStart: boolean;
   beginsPattern: string;
   endsPattern: string;
@@ -17,7 +17,7 @@ export interface ProblemMatcherWatchingConfig {
 export interface ProblemMatcherConfig {
   owner: string;
   pattern: ProblemMatcherPatternConfig | ProblemMatcherPatternConfig[];
-  watching?: ProblemMatcherWatchingConfig;
+  background?: ProblemMatcherBackgroundConfig;
 }
 
 export interface TaskConfig {

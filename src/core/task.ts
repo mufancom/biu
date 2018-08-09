@@ -169,7 +169,7 @@ export class Task extends EventEmitter {
   private handleStop(error: any, code?: number): void {
     if (this.problemMatcherMap) {
       for (let [, matcher] of this.problemMatcherMap) {
-        if (!matcher.watching) {
+        if (!matcher.background) {
           this.emit('problems-update', {owner: matcher.owner});
         }
       }

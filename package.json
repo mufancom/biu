@@ -6,7 +6,7 @@
     "biu": "bld/cli.js"
   },
   "scripts": {
-    "lint": "tslint -c tslint.json -p tsconfig.json --type-check",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
     "build": "yarn lint && rimraf bld && tsc"
   },
   "repository": {

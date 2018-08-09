@@ -18,8 +18,7 @@ groupList.addEventListener('click', event => {
   let groupName = target.getAttribute('data-name');
 
   let taskMap = new Map(
-    Array.from(taskDataMap.values())
-      .map(({ task }) => [task.name, task]),
+    Array.from(taskDataMap.values()).map(({task}) => [task.name, task]),
   );
 
   let namesOfTasksToCreate = [];
@@ -45,7 +44,7 @@ groupList.addEventListener('click', event => {
   }
 
   for (let id of idsOfTasksToStart) {
-    socket.emit('start', { id });
+    socket.emit('start', {id});
   }
 });
 
@@ -70,7 +69,7 @@ taskList.addEventListener('click', event => {
       return;
     }
 
-    socket.emit('start', { id });
+    socket.emit('start', {id});
   } else {
     socket.emit('create', {
       names: [name],
@@ -114,12 +113,10 @@ socket.on('initialize', data => {
   let groupNames = Object.keys(groupDict);
   let taskNames = data.taskNames || [];
 
-  taskGroupMap = Object
-    .keys(groupDict)
-    .reduce((map, name) => {
-      map.set(name, groupDict[name]);
-      return map;
-    }, new Map());
+  taskGroupMap = Object.keys(groupDict).reduce((map, name) => {
+    map.set(name, groupDict[name]);
+    return map;
+  }, new Map());
 
   if (groupNames.length) {
     let groupsFragment = document.createDocumentFragment();
@@ -160,7 +157,7 @@ socket.on('initialize', data => {
 });
 
 socket.on('create', data => {
-  appendTask(Object.assign({ running: true }, data));
+  appendTask(Object.assign({running: true}, data));
   updateAllOperationsVisibility();
 });
 
@@ -232,9 +229,9 @@ socket.on('exit', data => {
     return;
   }
 
-  let text = data.code ?
-    `[biu] Task exited with code ${data.code}.\n` :
-    '[biu] Task exited.\n';
+  let text = data.code
+    ? `[biu] Task exited with code ${data.code}.\n`
+    : '[biu] Task exited.\n';
 
   taskData.block.append(text);
 });
@@ -262,7 +259,9 @@ socket.on('stderr', data => {
 function appendTask(task) {
   let block = new OutputBlock(task.id, task.line);
 
-  let button = document.querySelector(`#task-list button[data-name="${task.name}"]`);
+  let button = document.querySelector(
+    `#task-list button[data-name="${task.name}"]`,
+  );
   button.setAttribute('data-id', task.id);
 
   block.setState(task.running ? 'running' : 'stopped');
@@ -275,7 +274,10 @@ function appendTask(task) {
     button,
   });
 
-  updateTaskButtonStatuses(task.id, task.running ? ['created', 'running'] : ['created']);
+  updateTaskButtonStatuses(
+    task.id,
+    task.running ? ['created', 'running'] : ['created'],
+  );
 
   return block;
 }
@@ -294,7 +296,11 @@ function updateTaskButtonStatuses(id, statuses) {
 }
 
 function updateAllOperationsVisibility() {
-  allOperationsWrapper.classList.remove('none-running', 'some-running', 'all-running');
+  allOperationsWrapper.classList.remove(
+    'none-running',
+    'some-running',
+    'all-running',
+  );
 
   let tasks = Array.from(taskDataMap.values()).map(taskData => taskData.task);
 

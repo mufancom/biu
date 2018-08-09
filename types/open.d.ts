@@ -1,5 +1,7 @@
 declare module 'open' {
   function open(target: string, app?: string): void;
-  namespace open { }
+  namespace open {
+
+  }
   export = open;
 }

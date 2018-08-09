@@ -1,6 +1,6 @@
 {
-  "extends": "vts",
-  "rules": {
-    "no-require-imports": false
+  "extends": "vts/tslint-prettier"
+  ,"rules": {
+    "no-console": [true, "log"]
   }
 }

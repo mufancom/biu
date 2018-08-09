@@ -6,7 +6,7 @@ import 'villa/platform/node';
 import * as Path from 'path';
 import * as Util from 'util';
 
-import { CLI, Shim } from 'clime';
+import {CLI, Shim} from 'clime';
 
 process.on('uncaughtException', exitWithError);
 process.on('unhandledRejection', exitWithError);

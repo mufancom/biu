@@ -1,9 +1,6 @@
-import {
-  Server as HttpServer,
-  createServer,
-} from 'http';
+import {Server as HttpServer, createServer} from 'http';
 
-import { EventEmitter } from 'events';
+import {EventEmitter} from 'events';
 import * as Path from 'path';
 
 import * as AnsiConverter from 'ansi-to-html';
@@ -11,13 +8,9 @@ import * as express from 'express';
 import * as socketIO from 'socket.io';
 import * as v from 'villa';
 
-import {
-  Task,
-  TaskExitEventData,
-  TaskProblemsUpdateEventData,
-} from './task';
+import {Task, TaskExitEventData, TaskProblemsUpdateEventData} from './task';
 
-import { Config } from './config';
+import {Config} from './config';
 
 const ansiConverter = new AnsiConverter();
 
@@ -39,10 +32,7 @@ export class Server extends EventEmitter {
   lastTaskId = 0;
   taskMap = new Map<string, Task>();
 
-  constructor(
-    public config: Config,
-    public configDir: string,
-  ) {
+  constructor(public config: Config, public configDir: string) {
     super();
 
     this.app = express();
@@ -69,23 +59,21 @@ export class Server extends EventEmitter {
 
       let options = this.config.tasks[name];
 
-      let problemMatcherConfig = typeof options.problemMatcher === 'string' ?
-        problemMatcherDict[options.problemMatcher] :
-        options.problemMatcher;
+      let problemMatcherConfig =
+        typeof options.problemMatcher === 'string'
+          ? problemMatcherDict[options.problemMatcher]
+          : options.problemMatcher;
 
-      let task = new Task(
-        name,
-        options.executable,
-        options.args || [],
-        {
-          cwd: options.cwd ? Path.resolve(this.configDir, options.cwd) : process.cwd(),
-          stdout: !!options.stdout,
-          stderr: !!options.stderr,
-          problemMatcher: problemMatcherConfig,
-          watch: options.watch,
-          autoClose: !!options.autoClose,
-        },
-      );
+      let task = new Task(name, options.executable, options.args || [], {
+        cwd: options.cwd
+          ? Path.resolve(this.configDir, options.cwd)
+          : process.cwd(),
+        stdout: !!options.stdout,
+        stderr: !!options.stderr,
+        problemMatcher: problemMatcherConfig,
+        watch: options.watch,
+        autoClose: !!options.autoClose,
+      });
 
       this.room.emit('create', {
         id,
@@ -158,7 +146,7 @@ export class Server extends EventEmitter {
 
     this.taskMap.delete(id);
 
-    this.room.emit('close', { id });
+    this.room.emit('close', {id});
   }
 
   private setup(): void {
@@ -169,7 +157,7 @@ export class Server extends EventEmitter {
   private outputProblems(owner: string): void {
     let lineSet = new Set<string>();
 
-    for (let [_, { problemMatcherMap }] of this.taskMap) {
+    for (let [, {problemMatcherMap}] of this.taskMap) {
       let problemMatcher = problemMatcherMap && problemMatcherMap.get(owner);
 
       if (!problemMatcher) {
@@ -177,13 +165,15 @@ export class Server extends EventEmitter {
       }
 
       for (let problem of problemMatcher.problems) {
-        lineSet.add([
-          problem.severity,
-          problem.file,
-          problem.location,
-          problem.code,
-          problem.message,
-        ].join(';'));
+        lineSet.add(
+          [
+            problem.severity,
+            problem.file,
+            problem.location,
+            problem.code,
+            problem.message,
+          ].join(';'),
+        );
       }
     }
 
@@ -197,14 +187,15 @@ export class Server extends EventEmitter {
   }
 
   private initializeTask(id: string, task: Task): void {
-    task.on('start', () => this.room.emit('start', { id }));
-    task.on('stop', () => this.room.emit('stop', { id }));
-    task.on('restarting-on-change', () => this.room.emit('restarting-on-change', { id }));
+    task.on('start', () => this.room.emit('start', {id}));
+    task.on('stop', () => this.room.emit('stop', {id}));
+    task.on('restarting-on-change', () =>
+      this.room.emit('restarting-on-change', {id}),
+    );
 
     task.on('error', (error: any) => {
-      error = error instanceof Error ?
-        error.stack || error.message :
-        `${error}`;
+      error =
+        error instanceof Error ? error.stack || error.message : `${error}`;
 
       this.room.emit('error', {
         id,
@@ -213,7 +204,7 @@ export class Server extends EventEmitter {
     });
 
     task.on('exit', async (data: TaskExitEventData) => {
-      this.room.emit('exit', { id, code: data.code });
+      this.room.emit('exit', {id, code: data.code});
 
       if (data.close) {
         await this.close(id);
@@ -281,16 +272,14 @@ export class Server extends EventEmitter {
     socket.emit('initialize', {
       taskNames: Object.keys(this.config.tasks),
       taskGroups: this.config.groups,
-      createdTasks: Array
-        .from(this.taskMap)
-        .map(([id, task]) => {
-          return {
-            id,
-            name: task.name,
-            line: task.line,
-            running: task.running,
-          };
-        }),
+      createdTasks: Array.from(this.taskMap).map(([id, task]) => {
+        return {
+          id,
+          name: task.name,
+          line: task.line,
+          running: task.running,
+        };
+      }),
     });
   }
 }

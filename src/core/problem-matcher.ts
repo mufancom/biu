@@ -1,13 +1,10 @@
-import { EventEmitter } from 'events';
+import {EventEmitter} from 'events';
 import * as Path from 'path';
 
-import * as Chalk from 'chalk';
-import { ExpectedError } from 'clime';
+import {ExpectedError} from 'clime';
+import stripColor = require('strip-color');
 
-import {
-  ProblemMatcherConfig,
-  ProblemMatcherWatchingConfig,
-} from './config';
+import {ProblemMatcherConfig, ProblemMatcherWatchingConfig} from './config';
 
 export interface ProblemMatcherPatternBase {
   severity?: number;
@@ -31,10 +28,10 @@ export interface Problem {
 }
 
 export class ProblemMatcher extends EventEmitter {
-  patternIndex: number;
-  pendingOutput: string;
-  active: boolean;
-  problems: Problem[];
+  patternIndex!: number;
+  pendingOutput!: string;
+  active!: boolean;
+  problems!: Problem[];
 
   patterns: ProblemMatcherPattern[];
   watching: ProblemMatcherWatchingConfig | undefined;
@@ -45,15 +42,14 @@ export class ProblemMatcher extends EventEmitter {
 
   private problemsUpdateEventTimer: NodeJS.Timer | undefined;
   private loopedPattern: ProblemMatcherPattern | undefined;
-  private activeMatch: Partial<Problem>;
+  private activeMatch!: Partial<Problem>;
 
-  constructor(
-    config: ProblemMatcherConfig,
-    public cwd: string,
-  ) {
+  constructor(config: ProblemMatcherConfig, public cwd: string) {
     super();
 
-    let patternConfigs = Array.isArray(config.pattern) ? config.pattern : [config.pattern];
+    let patternConfigs = Array.isArray(config.pattern)
+      ? config.pattern
+      : [config.pattern];
 
     this.patterns = patternConfigs.map(config => {
       return {
@@ -62,7 +58,7 @@ export class ProblemMatcher extends EventEmitter {
       };
     });
 
-    let watching = this.watching = config.watching;
+    let watching = (this.watching = config.watching);
 
     this.owner = config.owner;
 
@@ -87,7 +83,8 @@ export class ProblemMatcher extends EventEmitter {
     this.patternIndex = 0;
 
     let watching = this.watching;
-    this.active = !watching || !watching.beginsPattern || watching.activeOnStart;
+    this.active =
+      !watching || !watching.beginsPattern || watching.activeOnStart;
   }
 
   match(line: string): void {
@@ -120,7 +117,9 @@ export class ProblemMatcher extends EventEmitter {
         this.emit('problems-update');
       }
     } else if (this.watching) {
-      throw new ExpectedError('At least one of "beginsPattern" and "endsPattern" is required');
+      throw new ExpectedError(
+        'At least one of "beginsPattern" and "endsPattern" is required',
+      );
     }
 
     let pattern = this.loopedPattern!;
@@ -162,7 +161,11 @@ export class ProblemMatcher extends EventEmitter {
       return;
     }
 
-    if (this.loopedPattern !== pattern && this.patternIndex === 0 && pattern.loop) {
+    if (
+      this.loopedPattern !== pattern &&
+      this.patternIndex === 0 &&
+      pattern.loop
+    ) {
       this.loopedPattern = pattern;
     }
 
@@ -210,7 +213,7 @@ export class ProblemMatcher extends EventEmitter {
       let lineTerminator = groups[2];
 
       if (lineTerminator) {
-        this.match(Chalk.stripColor(line));
+        this.match(stripColor(line));
       } else {
         this.pendingOutput = line;
         break;
@@ -219,7 +222,7 @@ export class ProblemMatcher extends EventEmitter {
   }
 
   private pushProblem(schedule: boolean): void {
-    this.problems.push({ ...this.activeMatch as Problem });
+    this.problems.push({...(this.activeMatch as Problem)});
 
     if (schedule) {
       this.scheduleProblemsUpdateEvent();
@@ -235,7 +238,10 @@ export class ProblemMatcher extends EventEmitter {
   }
 }
 
-function resolveCapture(groups: RegExpExecArray, index: number | string | undefined): string | undefined {
+function resolveCapture(
+  groups: RegExpExecArray,
+  index: number | string | undefined,
+): string | undefined {
   if (index === undefined) {
     return undefined;
   }
@@ -245,7 +251,9 @@ function resolveCapture(groups: RegExpExecArray, index: number | string | undefi
   }
 
   return index.replace(/\$(&|\d+)/g, (text, indexStr: string) => {
-    let str = groups[indexStr === '&' ? 0 : Number(indexStr)] as string | undefined;
+    let str = groups[indexStr === '&' ? 0 : Number(indexStr)] as
+      | string
+      | undefined;
     return typeof str === 'string' ? str : text;
   });
 }

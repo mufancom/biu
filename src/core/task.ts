@@ -1,13 +1,13 @@
-import { ChildProcess, spawn } from 'child_process';
-import { EventEmitter } from 'events';
+import {ChildProcess, spawn} from 'child_process';
+import {EventEmitter} from 'events';
 
 import * as Chokidar from 'chokidar';
 import * as which from 'npm-which';
 import * as shellEscape from 'shell-escape';
 import * as v from 'villa';
 
-import { ProblemMatcherConfig } from './config';
-import { ProblemMatcher } from './problem-matcher';
+import {ProblemMatcherConfig} from './config';
+import {ProblemMatcher} from './problem-matcher';
 
 export interface TaskExitEventData {
   code: number;
@@ -50,14 +50,18 @@ export class Task extends EventEmitter {
     }
 
     if (options.problemMatcher) {
-      let configs = Array.isArray(options.problemMatcher) ? options.problemMatcher : [options.problemMatcher];
+      let configs = Array.isArray(options.problemMatcher)
+        ? options.problemMatcher
+        : [options.problemMatcher];
 
       this.problemMatcherMap = new Map(
         configs.map<[string, ProblemMatcher]>(config => {
           let matcher = new ProblemMatcher(config, options.cwd);
           let owner = matcher.owner;
 
-          matcher.on('problems-update', () => this.emit('problems-update', { owner }));
+          matcher.on('problems-update', () =>
+            this.emit('problems-update', {owner}),
+          );
 
           return [owner, matcher];
         }),
@@ -65,12 +69,10 @@ export class Task extends EventEmitter {
     }
 
     if (options.watch) {
-      Chokidar
-        .watch(options.watch, {
-          cwd: options.cwd,
-          ignoreInitial: true,
-        })
-        .on('all', () => this.scheduleRestart());
+      Chokidar.watch(options.watch, {
+        cwd: options.cwd,
+        ignoreInitial: true,
+      }).on('all', () => this.scheduleRestart());
     }
   }
 
@@ -84,7 +86,7 @@ export class Task extends EventEmitter {
     }
 
     if (this.problemMatcherMap) {
-      for (let [_, matcher] of this.problemMatcherMap) {
+      for (let [, matcher] of this.problemMatcherMap) {
         matcher.reset();
       }
     }
@@ -108,7 +110,7 @@ export class Task extends EventEmitter {
       let map = this.problemMatcherMap;
 
       if (map) {
-        for (let [_, matcher] of map) {
+        for (let [, matcher] of map) {
           matcher.push(data);
         }
       }
@@ -120,7 +122,7 @@ export class Task extends EventEmitter {
       let map = this.problemMatcherMap;
 
       if (map) {
-        for (let [_, matcher] of map) {
+        for (let [, matcher] of map) {
           matcher.push(data);
         }
       }
@@ -166,9 +168,9 @@ export class Task extends EventEmitter {
 
   private handleStop(error: any, code?: number): void {
     if (this.problemMatcherMap) {
-      for (let [_, matcher] of this.problemMatcherMap) {
+      for (let [, matcher] of this.problemMatcherMap) {
         if (!matcher.watching) {
-          this.emit('problems-update', { owner: matcher.owner });
+          this.emit('problems-update', {owner: matcher.owner});
         }
       }
     }

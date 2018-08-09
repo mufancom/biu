@@ -17,9 +17,7 @@ class OutputBlock {
   <pre class="output"></pre>
 </div>`;
 
-    wrapper
-      .getElementsByClassName('command')[0]
-      .innerText = line;
+    wrapper.getElementsByClassName('command')[0].innerText = line;
 
     this.block = wrapper.getElementsByClassName('output-block')[0];
     this.pre = wrapper.getElementsByClassName('output')[0];
@@ -36,7 +34,7 @@ class OutputBlock {
 
       let type = button.getAttribute('data-type');
 
-      socket.emit(type, { id });
+      socket.emit(type, {id});
     });
   }
 
@@ -52,7 +50,8 @@ class OutputBlock {
 
   append(html) {
     let pre = this.pre;
-    let atBottom = Math.abs(pre.scrollHeight - (pre.scrollTop + pre.clientHeight)) < 1;
+    let atBottom =
+      Math.abs(pre.scrollHeight - (pre.scrollTop + pre.clientHeight)) < 1;
 
     let temp = document.createElement('div');
     temp.innerHTML = html;

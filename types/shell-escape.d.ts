@@ -1,5 +1,7 @@
 declare module 'shell-escape' {
   function escape(args: string[]): string;
-  namespace escape { }
+  namespace escape {
+
+  }
   export = escape;
 }

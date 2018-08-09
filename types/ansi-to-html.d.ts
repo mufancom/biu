@@ -3,7 +3,9 @@ declare module 'ansi-to-html' {
     toHtml(ansi: string): string;
   }
 
-  namespace AnsiConverter { }
+  namespace AnsiConverter {
+
+  }
 
   export = AnsiConverter;
 }

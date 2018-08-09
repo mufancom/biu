@@ -13,10 +13,8 @@ import {
 
 import * as open from 'open';
 
-import { Config, readConfigFromPackageFile } from '../core/config';
-import { Server } from '../core/server';
-
-const log = console.log.bind(undefined);
+import {Config, readConfigFromPackageFile} from '../core/config';
+import {Server} from '../core/server';
 
 export class BiuOptions extends Options {
   @option({
@@ -24,14 +22,14 @@ export class BiuOptions extends Options {
     description: 'Port to listen, defaults to `8088`.',
     default: 8088,
   })
-  port: number;
+  port!: number;
 
   @option({
     flag: 'o',
     description: 'Open browser.',
     toggle: true,
   })
-  open: boolean;
+  open!: boolean;
 }
 
 @command({
@@ -44,9 +42,7 @@ export default class extends Command {
       default: '.biu',
     })
     configFile: Castable.File,
-
     options: BiuOptions,
-
     context: Context,
   ) {
     let config: Config;
@@ -57,9 +53,11 @@ export default class extends Command {
       config = configFile.require<Config>();
     } else if (configFile.default) {
       config = readConfigFromPackageFile(context.cwd);
-      log('Configuration loaded from "package.json".');
+      console.info('Configuration loaded from "package.json".');
     } else {
-      throw new ExpectedError(`Config file "${configFile.source}" (.js, .json) does not exist`);
+      throw new ExpectedError(
+        `Config file "${configFile.source}" (.js, .json) does not exist`,
+      );
     }
 
     let server = new Server(config, Path.dirname(configFile.fullName));
@@ -68,7 +66,7 @@ export default class extends Command {
 
     let url = `http://localhost:${options.port}/`;
 
-    log(`Open ${url} to start tasks.`);
+    console.info(`Open ${url} to start tasks.`);
 
     if (options.open) {
       open(url);

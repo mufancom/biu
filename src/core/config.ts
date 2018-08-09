@@ -1,8 +1,8 @@
 import * as FS from 'fs';
 import * as Path from 'path';
 
-import { ExpectedError } from 'clime';
-import { ProblemMatcherPatternBase } from './problem-matcher';
+import {ExpectedError} from 'clime';
+import {ProblemMatcherPatternBase} from './problem-matcher';
 
 export interface ProblemMatcherPatternConfig extends ProblemMatcherPatternBase {
   regexp: string;
@@ -74,7 +74,7 @@ export function readConfigFromPackageFile(cwd = process.cwd()): Config {
   }
 
   let groupDict =
-    packageData.biu && packageData.biu.groups ||
+    (packageData.biu && packageData.biu.groups) ||
     packageData.biuGroups ||
     packageData['biu-groups'];
 

@@ -1,6 +1,8 @@
 import {ProblemMatcherConfig} from '../core/config';
-import {tscWatch} from './tsc-watch';
+
+import {tscWatch, tslint} from './typescript';
 
 export const builtInProblemMatcherDict: Dictionary<ProblemMatcherConfig> = {
-  '$tsc-watch': tscWatch,
+  '$typescript:tsc-watch': tscWatch,
+  '$typescript:tslint': tslint,
 };

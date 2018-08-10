@@ -7,11 +7,11 @@ import stripColor = require('strip-color');
 import {ProblemMatcherBackgroundConfig, ProblemMatcherConfig} from './config';
 
 export interface ProblemMatcherPatternBase {
-  severity?: number;
-  file: number;
-  location: number;
-  code?: number;
-  message?: number;
+  severity?: number | string;
+  file: number | string;
+  location: number | string;
+  code?: number | string;
+  message?: number | string;
   loop?: boolean;
 }
 

@@ -19,3 +19,15 @@ export const tscWatch: ProblemMatcherConfig = {
       '^\\s*(?:message TS6042:|\\[?\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM| a\\.m\\.| p\\.m\\.)?(?:\\]| -)) (?:Compilation complete\\.|Found \\d+ errors?\\.) Watching for file changes\\.',
   },
 };
+
+export const tslint: ProblemMatcherConfig = {
+  owner: 'typescript',
+  pattern: {
+    regexp:
+      '^(WARNING|ERROR):(?:\\s+\\(\\S*\\))?\\s+(\\S.*)\\[(\\d+), (\\d+)\\]:\\s+(.*)$',
+    severity: 1,
+    file: 2,
+    location: '$3,$4',
+    message: 5,
+  },
+};

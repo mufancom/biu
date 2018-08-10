@@ -14,11 +14,9 @@ Biu is a simple command-line tool for running multiple command-line tasks at the
 
 ```sh
 # global
-npm install biu --global
 yarn global add biu
 
 # local
-npm install biu --save-dev
 yarn add biu --dev
 ```
 
@@ -32,45 +30,62 @@ biu --help
 
 Biu loads configuration from a Node.js module, it could either be a `.js` or `.json` file. By default, it tries to require `.biu`, or read `scripts` section of `package.json` from the current working directory if no configuration file is specified and the default `.biu` (`.js`, `.json`) does not exist.
 
-The configuration contains three fields: `problemMatchers`, `tasks` (required) and `groups`. And here's an example:
+The configuration contains three fields: `tasks` (required), `groups` and `problemMatchers`.
 
-**.biu.json**
+### Using built-in problem matchers
+
+Currently Biu has the following built-in problem matchers:
+
+- `$typescript:tsc-watch`
+- `$typescript:tslint`
 
 ```json
 {
+  "tasks": {
+    "build-app": {
+      "executable": "tsc",
+      "args": ["-p", "src/app", "-w"],
+      "problemMatcher": "$typescript:tsc-watch"
+    },
+    "build-server": {
+      "executable": "tsc",
+      "args": ["-p", "src/server", "-w"],
+      "problemMatcher": "$typescript:tsc-watch"
+    }
+  },
+  "groups": {
+    "all": ["build-app", "build-server"]
+  }
+}
+```
+
+### Using custom problem matchers
+
+To use custom problem matchers, add it to the `problemMatchers` field:
+
+```json
+{
+  "tasks": {
+    "build-app": {
+      "executable": "tsc",
+      "args": ["-p", "src/app", "-w"],
+      "problemMatcher": "$typescript:tsc-watch"
+    },
+    "build-server": {
+      "executable": "tsc",
+      "args": ["-p", "src/server", "-w"],
+      "problemMatcher": "$typescript:tsc-watch"
+    },
+    "build-website": {
+      "executable": "webpack",
+      "problemMatcher": "$typescript:at-loader"
+    }
+  },
+  "groups": {
+    "all": ["build-app", "build-server", "build-website"]
+  },
   "problemMatchers": {
-    "typescript-tsc": {
-      "owner": "typescript",
-      "pattern": {
-        "regexp": "^([^\\s].*)\\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\):\\s+(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$",
-        "file": 1,
-        "location": 2,
-        "severity": 3,
-        "code": 4,
-        "message": 5
-      },
-      "watching": {
-        "activeOnStart": true,
-        "beginsPattern": "^\\s*(?:message TS6032:|\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM)? -) File change detected\\. Starting incremental compilation\\.\\.\\.",
-        "endsPattern": "^\\s*(?:message TS6042:|\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM)? -) Compilation complete\\. Watching for file changes\\."
-      }
-    },
-    "typescript-ng-cli": {
-      "owner": "typescript",
-      "pattern": {
-        "regexp": "^(ERROR|WARNING) in (.+\\.ts) \\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\): (.+)$",
-        "severity": 1,
-        "file": 2,
-        "location": 3,
-        "message": 4
-      },
-      "watching": {
-        "activeOnStart": true,
-        "beginsPattern": "webpack: Compiling...",
-        "endsPattern": "webpack: (?:Compiled successfully|Compiled with warnings|Failed to compile)."
-      }
-    },
-    "typescript-at-loader": {
+    "$typescript:at-loader": {
       "owner": "typescript",
       "pattern": [
         {
@@ -85,97 +100,41 @@ The configuration contains three fields: `problemMatchers`, `tasks` (required) a
           "message": 2
         }
       ],
-      "watching": {
+      "background": {
         "beginsPattern": "^\\[at-loader\\] Checking started in a separate process\\.\\.\\.$"
       }
     }
-  },
-  "tasks": {
-    "start-app": {
-      "executable": "ng",
-      "args": [
-        "serve", "--hmr", "-e=hmr"
-      ],
-      "problemMatcher": "typescript-ng-cli"
-    },
-    "start-server": {
-      "executable": "node",
-      "args": [
-        "bld/server/main.js"
-      ],
-      "watch": [
-        "bld/server/*.js",
-        "bld/server/modules/**/*.js"
-      ]
-    },
-    "build-app": {
-      "executable": "ng",
-      "args": [
-        "build"
-      ]
-    },
-    "build-server": {
-      "executable": "tsc",
-      "args": [
-        "-p", "src/server",
-        "-w"
-      ],
-      "problemMatcher": "typescript-tsc"
-    },
-    "build-website-desktop": {
-      "executable": "webpack",
-      "cwd": "src/website",
-      "args": [
-        "--env.TARGET", "desktop",
-        "--env.ENV", "dev",
-        "--env.WATCH"
-      ],
-      "problemMatcher": "typescript-at-loader"
-    },
-    "build-website-libs": {
-      "executable": "webpack",
-      "cwd": "src/website",
-      "args": [
-        "--env.TARGET", "libs",
-        "--env.ENV", "dev"
-      ]
-    }
-  },
-  "groups": {
-    "app": ["start-app", "start-server", "build-server", "build-website-desktop"],
-    "server": ["build-app", "start-server", "build-server", "build-website-desktop"]
   }
 }
 ```
 
-Checkout [config.ts](src/core/config.ts) for options supported.
+Checkout [config.ts](src/core/config.ts) for more options.
 
-#### package.json `scripts` section support
+### VSCode Problem Matcher Support
 
-If biu read configuration from `package.json`, it will convert all keys in `scripts` section into `tasks` configuration. And if you add `biuGroups`, `biu-groups` or `groups` under `biu` section into your `package.json`, biu will read it as `groups` configuration.
-
-### VS Code Problem Matcher Support
-
-To make the aggregated problem matcher output work in VS Code, you'll need to define biu as a task and configure proper problem matcher options in `tasks.json`:
+To make the aggregated problem matcher output work in VSCode, you'll need to define Biu as a task and configure proper problem matcher options in `tasks.json`:
 
 ```json
 {
-  "version": "0.1.0",
+  "version": "2.0.0",
   "tasks": [
     {
-      "taskName": "biu",
-      "command": "npm",
-      "isShellCommand": true,
+      "label": "biu",
+      "type": "shell",
+      "command": "yarn",
+      "args": ["biu"],
       "isBackground": true,
-      "isBuildCommand": true,
-      "args": ["run", "biu"],
-      "showOutput": "silent",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "problemMatcher": {
+        "name": "biu-typescript",
         "owner": "typescript",
-        "fileLocation": "absolute",
         "applyTo": "closedDocuments",
+        "fileLocation": "absolute",
         "pattern": {
-          "regexp": "^\\[biu-problem:typescript:([^;]*);([^;]*);([^;]*);([^;]*);(.*)\\]$",
+          "regexp": "^\\[biu-problem:typescript:([^;]*);([^;]*);([^;]*);([^;]*);(.*?)\\]?$",
           "severity": 1,
           "file": 2,
           "location": 3,
@@ -192,6 +151,36 @@ To make the aggregated problem matcher output work in VS Code, you'll need to de
   ]
 }
 ```
+
+You can also install [Biu Problem Matchers] extension which contributes the following problem matchers:
+
+- `$biu-typescript`
+
+Thus you will be able to simplify your task configuration.
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "biu",
+      "type": "shell",
+      "command": "yarn",
+      "args": ["biu"],
+      "isBackground": true,
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$biu-typescript"
+    }
+  ]
+}
+```
+
+### Support for package.json `scripts`
+
+If configuration is loaded from `package.json`, Biu will convert all keys in `scripts` section into `tasks`. And if you add `biuGroups`, `biu-groups` or `groups` under `biu` section into your `package.json`, Biu will load it as `groups`.
 
 ## License
 

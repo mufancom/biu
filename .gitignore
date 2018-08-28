@@ -4,5 +4,6 @@
 /bld/
 
 *.log
+*.tgz
 
 /.biu.json

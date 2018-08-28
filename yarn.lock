@@ -2,6 +2,21 @@
 # yarn lockfile v1
 
 
+"@magicspace/configs@^0.1.28":
+  version "0.1.28"
+  resolved "http://registry.npm.taobao.org/@magicspace/configs/download/@magicspace/configs-0.1.28.tgz#1d6104878247c0be167dfe5bd5beb8b3aeb77aa4"
+  dependencies:
+    "@magicspace/tslint-rules" "^0.1.24"
+    tslint-config-prettier "^1.10.0"
+
+"@magicspace/tslint-rules@^0.1.24":
+  version "0.1.24"
+  resolved "http://registry.npm.taobao.org/@magicspace/tslint-rules/download/@magicspace/tslint-rules-0.1.24.tgz#4f9a24dc1f8cbee3c9f9d866c520c30c3e7fed09"
+  dependencies:
+    lodash "^4.17.10"
+    resolve "^1.8.1"
+    tsutils "^2.28.0"
+
 "@types/body-parser@*":
   version "1.17.0"
   resolved "http://registry.npm.taobao.org/@types/body-parser/download/@types/body-parser-1.17.0.tgz#9f5c9d9bd04bb54be32d5eb9fc0d8c974e6cf58c"
@@ -1005,6 +1020,10 @@ lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "http://registry.npm.taobao.org/lodash.debounce/download/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
 
+lodash@^4.17.10:
+  version "4.17.10"
+  resolved "http://registry.npm.taobao.org/lodash/download/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+
 map-cache@^0.2.2:
   version "0.2.2"
   resolved "http://registry.npm.taobao.org/map-cache/download/map-cache-0.2.2.tgz#c32abd0bd6525d9b051645bb4f26ac5dc98a0dbf"
@@ -1399,7 +1418,7 @@ resolve-url@^0.2.1:
   version "0.2.1"
   resolved "http://registry.npm.taobao.org/resolve-url/download/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
 
-resolve@^1.3.2:
+resolve@^1.3.2, resolve@^1.8.1:
   version "1.8.1"
   resolved "http://registry.npm.taobao.org/resolve/download/resolve-1.8.1.tgz#82f1ec19a423ac1fbd080b0bab06ba36e84a7a26"
   dependencies:
@@ -1757,7 +1776,7 @@ tslint@^5.11.0:
     tslib "^1.8.0"
     tsutils "^2.27.2"
 
-tsutils@^2.27.2:
+tsutils@^2.27.2, tsutils@^2.28.0:
   version "2.29.0"
   resolved "http://registry.npm.taobao.org/tsutils/download/tsutils-2.29.0.tgz#32b488501467acbedd4b85498673a0812aca0b99"
   dependencies:
@@ -1831,12 +1850,6 @@ villa@^0.3.1:
   resolved "http://registry.npm.taobao.org/villa/download/villa-0.3.1.tgz#31a00b065fc2a312f1953ec86c8ac2bd4da5d5be"
   dependencies:
     tslib "^1.8.0"
-
-vts@^5.8.6:
-  version "5.8.6"
-  resolved "http://registry.npm.taobao.org/vts/download/vts-5.8.6.tgz#17318f3258a28aaeecc26237765414779040524e"
-  dependencies:
-    tslint-config-prettier "^1.10.0"
 
 which@^1.2.10:
   version "1.3.1"

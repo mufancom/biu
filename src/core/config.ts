@@ -2,6 +2,7 @@ import * as FS from 'fs';
 import * as Path from 'path';
 
 import {ExpectedError} from 'clime';
+
 import {ProblemMatcherPatternBase} from './problem-matcher';
 
 export interface ProblemMatcherPatternConfig extends ProblemMatcherPatternBase {

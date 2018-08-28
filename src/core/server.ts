@@ -1,17 +1,16 @@
-import {Server as HttpServer, createServer} from 'http';
-
 import {EventEmitter} from 'events';
+import {Server as HttpServer, createServer} from 'http';
 import * as Path from 'path';
 
-import * as AnsiConverter from 'ansi-to-html';
-import * as express from 'express';
-import * as socketIO from 'socket.io';
+import AnsiConverter from 'ansi-to-html';
+import express from 'express';
+import socketIO from 'socket.io';
 import * as v from 'villa';
 
-import {Task, TaskExitEventData, TaskProblemsUpdateEventData} from './task';
-
 import {builtInProblemMatcherDict} from '../problem-matchers';
+
 import {Config, ProblemMatcherConfig} from './config';
+import {Task, TaskExitEventData, TaskProblemsUpdateEventData} from './task';
 
 const ansiConverter = new AnsiConverter();
 

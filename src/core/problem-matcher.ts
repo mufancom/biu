@@ -2,7 +2,7 @@ import {EventEmitter} from 'events';
 import * as Path from 'path';
 
 import {ExpectedError} from 'clime';
-import stripColor = require('strip-color');
+import stripColor from 'strip-color';
 
 import {ProblemMatcherBackgroundConfig, ProblemMatcherConfig} from './config';
 
@@ -172,26 +172,31 @@ export class ProblemMatcher extends EventEmitter {
     let activeMatch = this.activeMatch;
 
     let severity = resolveCapture(groups, pattern.severity);
+
     if (severity !== undefined) {
       activeMatch.severity = severity;
     }
 
     let file = resolveCapture(groups, pattern.file);
+
     if (file !== undefined) {
       activeMatch.file = Path.resolve(this.cwd, file);
     }
 
     let location = resolveCapture(groups, pattern.location);
+
     if (location !== undefined) {
       activeMatch.location = location;
     }
 
     let code = resolveCapture(groups, pattern.code);
+
     if (code !== undefined) {
       activeMatch.code = code;
     }
 
     let message = resolveCapture(groups, pattern.message);
+
     if (message !== undefined) {
       activeMatch.message = message;
     }

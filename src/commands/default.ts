@@ -10,8 +10,7 @@ import {
   option,
   param,
 } from 'clime';
-
-import * as open from 'open';
+import open from 'open';
 
 import {Config, readConfigFromPackageFile} from '../core/config';
 import {Server} from '../core/server';
@@ -44,7 +43,7 @@ export default class extends Command {
     configFile: Castable.File,
     options: BiuOptions,
     context: Context,
-  ) {
+  ): Promise<void> {
     let config: Config;
 
     let configFilePath = await configFile.exists(['', '.js', '.json']);

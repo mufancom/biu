@@ -1,6 +1,6 @@
 {
-  "extends": "vts/tslint-prettier"
-  ,"rules": {
-    "no-console": [true, "log"]
+  "extends": "@magicspace/configs/tslint-prettier",
+  "rules": {
+    "import-path-be-smart": false
   }
 }

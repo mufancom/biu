@@ -1,19 +1,12 @@
 {
+  "extends": "./node_modules/@magicspace/configs/tsconfig.json",
   "compilerOptions": {
     "target": "es2017",
-    "module": "commonjs",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "strict": true,
-    "noEmitOnError": true,
-    "noUnusedLocals": true,
-    "sourceMap": true,
 
     "rootDir": "src",
     "outDir": "bld"
   },
-  "exclude": [
-    "bld",
-    "node_modules"
-  ]
+  "exclude": ["bld", "node_modules"]
 }

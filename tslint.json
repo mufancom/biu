@@ -1,6 +1,3 @@
 {
-  "extends": "@magicspace/configs/tslint-prettier",
-  "rules": {
-    "import-path-be-smart": false
-  }
+  "extends": "@magicspace/configs/tslint-prettier"
 }

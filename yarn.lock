@@ -2,16 +2,16 @@
 # yarn lockfile v1
 
 
-"@magicspace/configs@^0.1.28":
-  version "0.1.28"
-  resolved "http://registry.npm.taobao.org/@magicspace/configs/download/@magicspace/configs-0.1.28.tgz#1d6104878247c0be167dfe5bd5beb8b3aeb77aa4"
+"@magicspace/configs@^0.1.29":
+  version "0.1.29"
+  resolved "http://registry.npm.taobao.org/@magicspace/configs/download/@magicspace/configs-0.1.29.tgz#4d11dc655cc73b6bab94dfc6e4039c5ed9c9c1a0"
   dependencies:
-    "@magicspace/tslint-rules" "^0.1.24"
+    "@magicspace/tslint-rules" "^0.1.25"
     tslint-config-prettier "^1.10.0"
 
-"@magicspace/tslint-rules@^0.1.24":
-  version "0.1.24"
-  resolved "http://registry.npm.taobao.org/@magicspace/tslint-rules/download/@magicspace/tslint-rules-0.1.24.tgz#4f9a24dc1f8cbee3c9f9d866c520c30c3e7fed09"
+"@magicspace/tslint-rules@^0.1.25":
+  version "0.1.25"
+  resolved "http://registry.npm.taobao.org/@magicspace/tslint-rules/download/@magicspace/tslint-rules-0.1.25.tgz#3a46e875ebcf882532aba3b5210ee5151fd4fa2e"
   dependencies:
     lodash "^4.17.10"
     resolve "^1.8.1"

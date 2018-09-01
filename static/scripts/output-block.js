@@ -1,5 +1,5 @@
 class OutputBlock {
-  constructor(id, line) {
+  constructor(id, line, name) {
     let that = this;
 
     let wrapper = document.createElement('div');
@@ -13,11 +13,13 @@ class OutputBlock {
     <button class="stop" data-type="stop">stop</button>
     <button class="close red" data-type="close">close</button>
   </div>
-  <div class="command"></div>
+  <div class="command" title="${line}"></div>
   <pre class="output"></pre>
 </div>`;
 
-    wrapper.getElementsByClassName('command')[0].innerText = line;
+    wrapper.getElementsByClassName('command')[0].innerHTML = `
+      <span class="label">${name}</span>${line}
+    `;
 
     this.block = wrapper.getElementsByClassName('output-block')[0];
     this.pre = wrapper.getElementsByClassName('output')[0];

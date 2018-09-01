@@ -72,6 +72,10 @@ class OutputBlock {
 
     pre.appendChild(fragment);
 
+    if (pre.childNodes.length > 100) {
+      pre.removeChild(pre.firstChild);
+    }
+
     if (atBottom) {
       pre.scrollTop = pre.scrollHeight - pre.clientHeight;
     }

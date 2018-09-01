@@ -1,3 +1,5 @@
+const MAX_LINES = 3000;
+
 class OutputBlock {
   constructor(id, name, line) {
     let that = this;
@@ -72,8 +74,24 @@ class OutputBlock {
 
     pre.appendChild(fragment);
 
-    if (pre.childNodes.length > 100) {
-      pre.removeChild(pre.firstChild);
+    if (pre.textContent.split('\n').length > MAX_LINES) {
+      let firstChildText = pre.firstChild.textContent;
+
+      while (pre.childNodes.length > 0) {
+        if (firstChildText.lastIndexOf('\n') > firstChildText.indexOf('\n')) {
+          pre.firstChild.textContent = firstChildText
+            .split('\n')
+            .slice(1)
+            .join('\n');
+          break;
+        } else if (firstChildText.indexOf('\n') > -1) {
+          pre.removeChild(pre.firstChild);
+          break;
+        } else {
+          pre.removeChild(pre.firstChild);
+          firstChildText = pre.firstChild.textContent;
+        }
+      }
     }
 
     if (atBottom) {

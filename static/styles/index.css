@@ -169,9 +169,8 @@ button.created.running::before {
   white-space: nowrap;
 }
 
-.output-block .command .label {
+.output-block .command .name {
   font-weight: bold;
-  margin-right: 5px;
 }
 
 .output-block pre {

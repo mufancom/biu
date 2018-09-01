@@ -257,7 +257,7 @@ socket.on('stderr', data => {
 });
 
 function appendTask(task) {
-  let block = new OutputBlock(task.id, task.line, task.name);
+  let block = new OutputBlock(task.id, task.name, task.line);
 
   let button = document.querySelector(
     `#task-list button[data-name="${task.name}"]`,

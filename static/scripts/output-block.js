@@ -72,26 +72,19 @@ class OutputBlock {
       fragment.appendChild(temp.childNodes[0]);
     }
 
+    if (
+      pre.lastChild &&
+      pre.lastChild.dataset &&
+      pre.lastChild.dataset.uncompleted
+    ) {
+      pre.removeChild(pre.lastChild);
+    }
     pre.appendChild(fragment);
 
-    if (pre.textContent.split('\n').length > MAX_LINES) {
-      let firstChildText = pre.firstChild.textContent;
+    let over = pre.childNodes.length - MAX_LINES;
 
-      while (pre.childNodes.length > 0) {
-        if (firstChildText.lastIndexOf('\n') > firstChildText.indexOf('\n')) {
-          pre.firstChild.textContent = firstChildText
-            .split('\n')
-            .slice(1)
-            .join('\n');
-          break;
-        } else if (firstChildText.indexOf('\n') > -1) {
-          pre.removeChild(pre.firstChild);
-          break;
-        } else {
-          pre.removeChild(pre.firstChild);
-          firstChildText = pre.firstChild.textContent;
-        }
-      }
+    for (let i = over - 1; i > -1; i--) {
+      pre.removeChild(pre.childNodes[i]);
     }
 
     if (atBottom) {

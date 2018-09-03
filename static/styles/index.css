@@ -135,6 +135,10 @@ button.created.running::before {
   transition: opacity linear 0.5s;
 }
 
+.output-block pre > div {
+  min-height: 1em;
+}
+
 .output-block.running pre {
   opacity: 1;
 }

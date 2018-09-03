@@ -184,7 +184,7 @@ socket.on('start', data => {
 
   taskData.task.running = true;
   taskData.block.setState('running');
-  taskData.block.append('[biu] Task started.\n');
+  taskData.block.append('<div data-type="system">[biu] Task started.</div>');
   updateTaskButtonStatuses(data.id, ['created', 'running']);
   updateAllOperationsVisibility();
 });
@@ -209,7 +209,9 @@ socket.on('restarting-on-change', data => {
     return;
   }
 
-  taskData.block.append('[biu] Restarting on change...\n');
+  taskData.block.append(
+    '<div data-type="system">[biu] Restarting on change...</div>',
+  );
 });
 
 socket.on('error', data => {
@@ -219,7 +221,7 @@ socket.on('error', data => {
     return;
   }
 
-  taskData.block.append(`${data.error}\n`);
+  taskData.block.append(`<div data-type="system">${data.error}</div>`);
 });
 
 socket.on('exit', data => {
@@ -230,8 +232,8 @@ socket.on('exit', data => {
   }
 
   let text = data.code
-    ? `[biu] Task exited with code ${data.code}.\n`
-    : '[biu] Task exited.\n';
+    ? `<div data-type="system">[biu] Task exited with code ${data.code}.</div>`
+    : '<div data-type="system">[biu] Task exited.</div>';
 
   taskData.block.append(text);
 });

@@ -1,3 +1,5 @@
+const MAX_LINES = 3000;
+
 class OutputBlock {
   constructor(id, name, line) {
     let that = this;
@@ -70,11 +72,39 @@ class OutputBlock {
       fragment.appendChild(temp.childNodes[0]);
     }
 
-    pre.appendChild(fragment);
+    let type = fragment.firstChild.dataset.type;
+    let lastSameTypeNode = this.findLastNodeByType(type);
+
+    if (lastSameTypeNode && lastSameTypeNode.dataset.uncompleted) {
+      pre.insertBefore(fragment, lastSameTypeNode);
+      pre.removeChild(lastSameTypeNode);
+    } else {
+      pre.appendChild(fragment);
+    }
+
+    let over = pre.childNodes.length - MAX_LINES;
+
+    for (let i = 0; i < over; i++) {
+      pre.removeChild(pre.firstChild);
+    }
 
     if (atBottom) {
       pre.scrollTop = pre.scrollHeight - pre.clientHeight;
     }
+  }
+
+  findLastNodeByType(type) {
+    let pre = this.pre;
+
+    for (let i = pre.childNodes.length - 1; i >= 0; i--) {
+      let node = pre.childNodes[i];
+
+      if (node.dataset && node.dataset.type === type) {
+        return node;
+      }
+    }
+
+    return undefined;
   }
 
   remove() {

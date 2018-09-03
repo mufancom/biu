@@ -12,8 +12,6 @@ import {builtInProblemMatcherDict} from '../problem-matchers';
 import {Config, ProblemMatcherConfig} from './config';
 import {Task, TaskExitEventData, TaskProblemsUpdateEventData} from './task';
 
-const ansiConverter = new AnsiConverter();
-
 export interface TaskCreationCommand {
   names: string[];
   closeAll: boolean;
@@ -21,6 +19,16 @@ export interface TaskCreationCommand {
 
 export interface TaskOperationCommand {
   id: string;
+}
+
+interface TaskInfo {
+  converter: AnsiConverter;
+  lastData: string;
+}
+
+interface TaskInfoDict {
+  stdout: TaskInfo;
+  stderr: TaskInfo;
 }
 
 export class Server extends EventEmitter {
@@ -31,6 +39,7 @@ export class Server extends EventEmitter {
 
   lastTaskId = 0;
   taskMap = new Map<string, Task>();
+  taskInfoDictMap = new Map<string, TaskInfoDict>();
 
   constructor(public config: Config, public configDir: string) {
     super();
@@ -76,6 +85,17 @@ export class Server extends EventEmitter {
         problemMatcher: problemMatcherConfig,
         watch: options.watch,
         autoClose: !!options.autoClose,
+      });
+
+      this.taskInfoDictMap.set(id, {
+        stdout: {
+          converter: new AnsiConverter({stream: true}),
+          lastData: '',
+        },
+        stderr: {
+          converter: new AnsiConverter({stream: true}),
+          lastData: '',
+        },
       });
 
       this.room.emit('create', {
@@ -215,21 +235,48 @@ export class Server extends EventEmitter {
     });
 
     task.on('stdout', (data: Buffer) => {
-      this.room.emit('stdout', {
-        id,
-        html: ansiConverter.toHtml(encodeOutput(data.toString())),
-      });
+      this.onStdData(id, 'stdout', data);
     });
 
     task.on('stderr', (data: Buffer) => {
-      this.room.emit('stderr', {
-        id,
-        html: ansiConverter.toHtml(encodeOutput(data.toString())),
-      });
+      this.onStdData(id, 'stderr', data);
     });
 
     task.on('problems-update', (data: TaskProblemsUpdateEventData) => {
       this.outputProblems(data.owner);
+    });
+  }
+
+  private onStdData(id: string, event: keyof TaskInfoDict, data: Buffer): void {
+    let html = '';
+    let taskInfo = this.taskInfoDictMap.get(id)![event];
+
+    let lines = data.toString().split('\n');
+    let dataCompleted = lines[lines.length - 1] === '';
+
+    lines[0] = taskInfo.lastData + lines[0];
+
+    taskInfo.lastData = lines[lines.length - 1];
+
+    if (dataCompleted) {
+      lines = lines.slice(0, lines.length - 1);
+    }
+
+    for (let [index, line] of lines.entries()) {
+      if (index === lines.length - 1 && !dataCompleted) {
+        html += `<div data-type='${event}' data-uncompleted="true">${taskInfo.converter.toHtml(
+          line,
+        )}</div>`;
+      } else {
+        html += `<div data-type='${event}'>${taskInfo.converter.toHtml(
+          line,
+        )}</div>`;
+      }
+    }
+
+    this.room.emit(event, {
+      id,
+      html,
     });
   }
 

@@ -72,14 +72,15 @@ class OutputBlock {
       fragment.appendChild(temp.childNodes[0]);
     }
 
-    if (
-      pre.lastChild &&
-      pre.lastChild.dataset &&
-      pre.lastChild.dataset.uncompleted
-    ) {
-      pre.removeChild(pre.lastChild);
+    let type = fragment.firstChild.dataset.type;
+    let lastSameTypeNode = this.findLastNodeByType(type);
+
+    if (lastSameTypeNode && lastSameTypeNode.dataset.uncompleted) {
+      pre.insertBefore(fragment, lastSameTypeNode);
+      pre.removeChild(lastSameTypeNode);
+    } else {
+      pre.appendChild(fragment);
     }
-    pre.appendChild(fragment);
 
     let over = pre.childNodes.length - MAX_LINES;
 
@@ -90,6 +91,19 @@ class OutputBlock {
     if (atBottom) {
       pre.scrollTop = pre.scrollHeight - pre.clientHeight;
     }
+  }
+
+  findLastNodeByType(type) {
+    let pre = this.pre;
+
+    for (let i = pre.childNodes.length - 1; i > -1; i--) {
+      let node = pre.childNodes[i];
+
+      if (node.dataset && node.dataset.type === type) {
+        return node;
+      }
+    }
+    return null;
   }
 
   remove() {

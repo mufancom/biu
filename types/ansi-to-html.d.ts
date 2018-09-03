@@ -1,5 +1,5 @@
 declare module 'ansi-to-html' {
-  interface AnsiConverterOpts {
+  interface AnsiConverterOptions {
     fg?: string;
     bg?: string;
     newline?: boolean;
@@ -7,8 +7,9 @@ declare module 'ansi-to-html' {
     stream?: boolean;
     colors?: {[key: string]: string} | string[];
   }
+
   class AnsiConverter {
-    constructor(opts?: AnsiConverterOpts);
+    constructor(options?: AnsiConverterOptions);
     toHtml(ansi: string): string;
   }
 

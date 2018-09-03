@@ -23,8 +23,12 @@ export interface TaskOperationCommand {
 
 interface TaskInfo {
   converter: AnsiConverter;
-  lastStdout: string;
-  lastStderr: string;
+  lastData: string;
+}
+
+interface TaskInfoDict {
+  stdout: TaskInfo;
+  stderr: TaskInfo;
 }
 
 export class Server extends EventEmitter {
@@ -35,7 +39,7 @@ export class Server extends EventEmitter {
 
   lastTaskId = 0;
   taskMap = new Map<string, Task>();
-  taskInfoMap = new Map<string, TaskInfo>();
+  taskInfoDictMap = new Map<string, TaskInfoDict>();
 
   constructor(public config: Config, public configDir: string) {
     super();
@@ -83,10 +87,15 @@ export class Server extends EventEmitter {
         autoClose: !!options.autoClose,
       });
 
-      this.taskInfoMap.set(id, {
-        converter: new AnsiConverter({stream: true}),
-        lastStdout: '',
-        lastStderr: '',
+      this.taskInfoDictMap.set(id, {
+        stdout: {
+          converter: new AnsiConverter({stream: true}),
+          lastData: '',
+        },
+        stderr: {
+          converter: new AnsiConverter({stream: true}),
+          lastData: '',
+        },
       });
 
       this.room.emit('create', {
@@ -226,11 +235,11 @@ export class Server extends EventEmitter {
     });
 
     task.on('stdout', (data: Buffer) => {
-      this.onOut(id, 'stdout', data);
+      this.onStdData(id, 'stdout', data);
     });
 
     task.on('stderr', (data: Buffer) => {
-      this.onOut(id, 'stderr', data);
+      this.onStdData(id, 'stderr', data);
     });
 
     task.on('problems-update', (data: TaskProblemsUpdateEventData) => {
@@ -238,40 +247,34 @@ export class Server extends EventEmitter {
     });
   }
 
-  private onOut(id: string, event: 'stdout' | 'stderr', data: Buffer): void {
+  private onStdData(
+    id: string,
+    event: 'stdout' | 'stderr',
+    data: Buffer,
+  ): void {
     let html = '';
-    let taskInfo = this.taskInfoMap.get(id)!;
-    let dataString = data.toString();
+    let taskInfo = this.taskInfoDictMap.get(id)![event];
 
-    let lines = dataString.split('\n');
+    let lines = data.toString().split('\n');
+    let dataCompleted = lines[lines.length - 1] === '';
 
-    if (event === 'stdout' && taskInfo.lastStdout) {
-      lines[0] = taskInfo.lastStdout + lines[0];
-    }
+    lines[0] = taskInfo.lastData + lines[0];
 
-    if (event === 'stderr' && taskInfo.lastStderr) {
-      lines[0] = taskInfo.lastStderr + lines[0];
-    }
+    taskInfo.lastData = lines[lines.length - 1];
 
-    if (event === 'stdout') {
-      taskInfo.lastStdout = lines[lines.length - 1];
-    }
-
-    if (event === 'stderr') {
-      taskInfo.lastStderr = lines[lines.length - 1];
-    }
-
-    if (dataString.endsWith('\n')) {
+    if (dataCompleted) {
       lines = lines.slice(0, lines.length - 1);
     }
 
     for (let [index, line] of lines.entries()) {
-      if (index === lines.length - 1 && !dataString.endsWith('\n')) {
-        html += `<div data-uncompleted="true">${taskInfo.converter.toHtml(
+      if (index === lines.length - 1 && !dataCompleted) {
+        html += `<div data-type='${event}' data-uncompleted="true">${taskInfo.converter.toHtml(
           line,
         )}</div>`;
       } else {
-        html += `<div>${taskInfo.converter.toHtml(line)}</div>`;
+        html += `<div data-type='${event}'>${taskInfo.converter.toHtml(
+          line || ' ',
+        )}</div>`;
       }
     }
 

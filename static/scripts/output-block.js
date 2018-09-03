@@ -69,9 +69,6 @@ class OutputBlock {
     let fragment = document.createDocumentFragment();
 
     while (temp.childNodes.length) {
-      if (temp.childNodes[0].textContent === '') {
-        temp.childNodes[0].textContent = ' ';
-      }
       fragment.appendChild(temp.childNodes[0]);
     }
 
@@ -87,8 +84,8 @@ class OutputBlock {
 
     let over = pre.childNodes.length - MAX_LINES;
 
-    for (let i = over - 1; i >= 0; i--) {
-      pre.removeChild(pre.childNodes[i]);
+    for (let i = 0; i < over; i++) {
+      pre.removeChild(pre.firstChild);
     }
 
     if (atBottom) {

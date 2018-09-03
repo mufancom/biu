@@ -247,11 +247,7 @@ export class Server extends EventEmitter {
     });
   }
 
-  private onStdData(
-    id: string,
-    event: 'stdout' | 'stderr',
-    data: Buffer,
-  ): void {
+  private onStdData(id: string, event: keyof TaskInfoDict, data: Buffer): void {
     let html = '';
     let taskInfo = this.taskInfoDictMap.get(id)![event];
 
@@ -273,7 +269,7 @@ export class Server extends EventEmitter {
         )}</div>`;
       } else {
         html += `<div data-type='${event}'>${taskInfo.converter.toHtml(
-          line || ' ',
+          line,
         )}</div>`;
       }
     }

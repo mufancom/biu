@@ -69,6 +69,9 @@ class OutputBlock {
     let fragment = document.createDocumentFragment();
 
     while (temp.childNodes.length) {
+      if (temp.childNodes[0].textContent === '') {
+        temp.childNodes[0].textContent = ' ';
+      }
       fragment.appendChild(temp.childNodes[0]);
     }
 
@@ -84,7 +87,7 @@ class OutputBlock {
 
     let over = pre.childNodes.length - MAX_LINES;
 
-    for (let i = over - 1; i > -1; i--) {
+    for (let i = over - 1; i >= 0; i--) {
       pre.removeChild(pre.childNodes[i]);
     }
 
@@ -96,14 +99,15 @@ class OutputBlock {
   findLastNodeByType(type) {
     let pre = this.pre;
 
-    for (let i = pre.childNodes.length - 1; i > -1; i--) {
+    for (let i = pre.childNodes.length - 1; i >= 0; i--) {
       let node = pre.childNodes[i];
 
       if (node.dataset && node.dataset.type === type) {
         return node;
       }
     }
-    return null;
+
+    return undefined;
   }
 
   remove() {

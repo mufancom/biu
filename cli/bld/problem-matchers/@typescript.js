@@ -1,0 +1,29 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.tscWatch = {
+    owner: 'typescript',
+    pattern: {
+        regexp: '^([^\\s].*)[\\(:](\\d+[,:]\\d+)(?:\\):\\s+|\\s+-\\s+)(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$',
+        file: 1,
+        location: 2,
+        severity: 3,
+        code: 4,
+        message: 5,
+    },
+    background: {
+        activeOnStart: true,
+        beginsPattern: '^\\s*(?:message TS6032:|\\[?\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM| a\\.m\\.| p\\.m\\.)?(?:\\]| -)) File change detected\\. Starting incremental compilation\\.\\.\\.',
+        endsPattern: '^\\s*(?:message TS6042:|\\[?\\d{1,2}:\\d{1,2}:\\d{1,2}(?: AM| PM| a\\.m\\.| p\\.m\\.)?(?:\\]| -)) (?:Compilation complete\\.|Found \\d+ errors?\\.) Watching for file changes\\.',
+    },
+};
+exports.tslint = {
+    owner: 'typescript',
+    pattern: {
+        regexp: '^(WARNING|ERROR):(?:\\s+\\(\\S*\\))?\\s+(\\S.*)\\[(\\d+), (\\d+)\\]:\\s+(.*)$',
+        severity: 1,
+        file: 2,
+        location: '$3,$4',
+        message: 5,
+    },
+};
+//# sourceMappingURL=@typescript.js.map

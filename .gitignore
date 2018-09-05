@@ -6,4 +6,6 @@
 *.log
 *.tgz
 
+.cache
+
 /.biu.json

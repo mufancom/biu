@@ -173,7 +173,9 @@ export class Server extends EventEmitter {
   }
 
   private setup(): void {
-    this.app.use(express.static(Path.join(__dirname, '../../static')));
+    let clientBuildPath = Path.join(__dirname, '../../../client/bld');
+
+    this.app.use(express.static(clientBuildPath));
     this.io.on('connection', socket => this.initializeConnection(socket));
   }
 

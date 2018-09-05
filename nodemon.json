@@ -1,0 +1,5 @@
+{
+  "watch": ["cli/bld"],
+  "ext": "js",
+  "exec": "yarn start-cli"
+}

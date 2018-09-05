@@ -6,8 +6,15 @@
     "biu": "bld/cli.js"
   },
   "scripts": {
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "build": "yarn lint && rimraf bld && tsc"
+    "lint-cli": "tslint -c cli/src/program/tslint.json -p cli/src/program/tsconfig.json",
+    "lint-client": "tslint -c client/src/program/tslint.json -p client/src/program/tsconfig.json",
+    "lint": "yarn lint-cli && yarn lint-client",
+    "build-cli": "yarn lint-cli && rimraf cli/bld && tsc -p cli/src/program/tsconfig.json",
+    "build-client": "yarn lint-client && rimraf client/bld && parcel build client/src/index.html --out-dir client/bld --cache-dir client/.cache",
+    "build": "yarn build-cli && yarn build-client",
+    "start-cli": "node cli/bld/cli.js",
+    "start-cli-dev": "nodemon",
+    "start-client": "parcel serve client/src/index.html --port 8089 --out-dir client/bld --cache-dir client/.cache"
   },
   "repository": {
     "type": "git",
@@ -27,10 +34,12 @@
   },
   "homepage": "https://github.com/vilic/biu#readme",
   "files": [
-    "bld/**/*.js",
-    "static/**"
+    "cli/bld/**/*.js",
+    "client/bld/**"
   ],
   "dependencies": {
+    "@types/react": "^16.4.13",
+    "@types/react-dom": "^16.0.7",
     "ansi-to-html": "^0.6.6",
     "chalk": "^2.4.1",
     "chokidar": "^2.0.4",
@@ -39,6 +48,8 @@
     "npm-which": "^3.0.1",
     "open": "0.0.5",
     "prettier": "^1.14.2",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
     "shell-escape": "^0.2.0",
     "socket.io": "^2.1.1",
     "source-map-support": "^0.5.6",
@@ -53,6 +64,8 @@
     "@types/express": "^4.16.0",
     "@types/node": "^10.5.7",
     "@types/socket.io": "^1.4.36",
+    "nodemon": "^1.18.4",
+    "parcel-bundler": "^1.9.7",
     "rimraf": "^2.6.2",
     "tslint": "^5.11.0",
     "tslint-language-service": "^0.9.9",

@@ -3,18 +3,18 @@
   "version": "0.2.18",
   "description": "The command-line task hub.",
   "bin": {
-    "biu": "bld/cli.js"
+    "biu": "bld/cli/cli.js"
   },
   "scripts": {
-    "lint-cli": "tslint -c cli/src/program/tslint.json -p cli/src/program/tsconfig.json",
-    "lint-client": "tslint -c client/src/program/tslint.json -p client/src/program/tsconfig.json",
+    "lint-cli": "tslint -c src/cli/tslint.json -p src/cli/tsconfig.json",
+    "lint-client": "tslint -c src/client/tslint.json -p src/cli/tsconfig.json",
     "lint": "yarn lint-cli && yarn lint-client",
-    "build-cli": "yarn lint-cli && rimraf cli/bld && tsc -p cli/src/program/tsconfig.json",
-    "build-client": "yarn lint-client && rimraf client/bld && parcel build client/src/index.html --out-dir client/bld --cache-dir client/.cache",
+    "build-cli": "yarn lint-cli && rimraf bld/cli && tsc -p src/cli/tsconfig.json",
+    "build-client": "yarn lint-client && rimraf bld/client && parcel build src/client/index.html --out-dir bld/client",
     "build": "yarn build-cli && yarn build-client",
-    "start-cli": "node cli/bld/cli.js",
+    "start-cli": "node bld/cli/cli.js",
     "start-cli-dev": "nodemon",
-    "start-client": "parcel serve client/src/index.html --port 8089 --out-dir client/bld --cache-dir client/.cache"
+    "start-client": "parcel serve src/client/index.html --port 8089 --out-dir bld/client"
   },
   "repository": {
     "type": "git",
@@ -34,8 +34,8 @@
   },
   "homepage": "https://github.com/vilic/biu#readme",
   "files": [
-    "cli/bld/**/*.js",
-    "client/bld/**"
+    "bld/cli/**/*.js",
+    "bld/client/**"
   ],
   "dependencies": {
     "@types/react": "^16.4.13",

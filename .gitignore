@@ -1,10 +1,12 @@
 /.vscode/launch.json
+/.idea/
 
 /node_modules/
 /bld/
 
 *.log
 *.tgz
+yarn-error.log
 
 .cache
 

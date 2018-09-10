@@ -1,4 +1,7 @@
 {
   "extends": "@magicspace/configs/tslint-prettier",
-  "no-implicit-dependencies": [true, ["socket.io-client"]]
+  "rules": {
+    "no-implicit-dependencies": [true, ["socket.io-client"]],
+    "explicit-return-type": [true, {"complexTypeFixer": true}]
+  }
 }

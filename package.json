@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vilic/biu.git"
+    "url": "git+https://github.com/makeflow/syncable.git"
   },
   "keywords": [
     "command-line",
@@ -30,9 +30,9 @@
   "author": "vilicvane",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vilic/biu/issues"
+    "url": "https://github.com/makeflow/syncable/issues"
   },
-  "homepage": "https://github.com/vilic/biu#readme",
+  "homepage": "https://github.com/makeflow/syncable#readme",
   "files": [
     "bld/cli/**/*.js",
     "bld/client/**"
@@ -46,6 +46,7 @@
     "chokidar": "^2.0.4",
     "clime": "^0.5.9",
     "express": "^4.16.3",
+    "mobx": "^5.1.0",
     "mobx-react": "^5.2.6",
     "npm-which": "^3.0.1",
     "open": "0.0.5",

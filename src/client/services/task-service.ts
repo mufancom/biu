@@ -12,6 +12,14 @@ export interface Task {
   output?: string;
 }
 
+export interface CreatedTask extends Task {
+  id: TaskId;
+}
+
+export interface TaskRef {
+  id: TaskId;
+}
+
 export interface TaskGroupDict {
   [key: string]: string[];
 }
@@ -21,7 +29,7 @@ export interface TaskDict {
 }
 
 export interface InitializeData {
-  createdTasks: Task[];
+  createdTasks: CreatedTask[];
   taskGroups: TaskGroupDict;
   taskNames: string[];
 }
@@ -34,11 +42,16 @@ export class TaskService {
   tasks: TaskDict = {};
 
   @observable
-  createdTaskMap = new Map<TaskId, Task>();
+  createdTaskMap = new Map<TaskId, CreatedTask>();
 
   constructor(private socketIOService: SocketIOService) {
     this.socketIOService.on('connect', this.onConnect);
     this.socketIOService.on('initialize', this.onInitialize);
+    this.socketIOService.on('create', this.onCreate);
+    this.socketIOService.on('close', this.onClose);
+    this.socketIOService.on('start', this.onStart);
+    this.socketIOService.on('stop', this.onStop);
+    this.socketIOService.on('restarting-on-change', this.onRestartOnChange);
   }
 
   onConnect = (): void => {
@@ -52,13 +65,17 @@ export class TaskService {
     taskGroups,
     taskNames,
   }: InitializeData): void => {
-    this.taskGroups = taskGroups;
+    if (taskGroups) {
+      this.taskGroups = taskGroups;
+    }
 
-    for (let taskName of taskNames) {
-      this.tasks[name] = {
-        name: taskName,
-        running: false,
-      };
+    if (taskNames) {
+      for (let taskName of taskNames) {
+        this.tasks[name] = {
+          name: taskName,
+          running: false,
+        };
+      }
     }
 
     for (let task of createdTasks) {
@@ -66,7 +83,76 @@ export class TaskService {
 
       this.tasks[name] = task;
 
-      this.createdTaskMap.set(id!, task);
+      this.createdTaskMap.set(id, task);
     }
   };
+
+  onCreate = (task: CreatedTask): void => {
+    let {id, name} = task;
+
+    task.running = true;
+
+    this.tasks[name] = task;
+
+    this.createdTaskMap.set(id, task);
+  };
+
+  onClose = (taskRef: TaskRef): void => {
+    let {id} = taskRef;
+
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    this.createdTaskMap.delete(id);
+  };
+
+  onStart = (taskRef: TaskRef): void => {
+    let {id} = taskRef;
+
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    task.running = true;
+  };
+
+  onStop = (taskRef: TaskRef): void => {
+    let {id} = taskRef;
+
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    task.running = false;
+  };
+
+  onRestartOnChange = (taskRef: TaskRef): void => {
+    let {id} = taskRef;
+
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    // TODO: add status tip to the block
+  };
+
+  // private getTask(name: string): Task {
+  //   if (!(name in this.tasks)) {
+  //     this.tasks[name] = {
+  //       name,
+  //       running: false,
+  //     };
+  //   }
+  //
+  //   return this.tasks[name];
+  // }
 }

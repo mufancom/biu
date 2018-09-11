@@ -1,45 +1,33 @@
-import 'react-mosaic-component/react-mosaic-component.css';
+import {observer} from '@makeflow/mobx-utils';
+import classNames from 'classnames';
+import React, {Component, ReactNode} from 'react';
+import {styled} from 'theme';
 
-import {inject, observer} from '@makeflow/mobx-utils';
-import React, {Component} from 'react';
-import {Mosaic, MosaicWindow} from 'react-mosaic-component';
+import {Menu} from './menu';
+import {Manager} from './window';
 
-import {TaskId, TaskService} from '../services/task-service';
-import {mapObject} from '../utils/lang';
+const Wrapper = styled.div`
+  ${Menu.Wrapper} {
+    flex: 270px;
+  }
+`;
 
-const TaskIdMosaic = Mosaic.ofType<TaskId>();
-
-const TaskIdMosaicWindow = MosaicWindow.ofType<TaskId>();
+export interface AppProps {
+  className?: string;
+}
 
 @observer
-export class App extends Component {
-  @inject
-  taskService!: TaskService;
+export class App extends Component<AppProps> {
+  render(): ReactNode {
+    let {className} = this.props;
 
-  componentWillMount(): void {}
-
-  render(): JSX.Element {
     return (
-      <div>
-        {mapObject(this.taskService.tasks, task => {
-          return <div key={task.name}>{task.name}</div>;
-        })}
-        <div style={{display: 'block', height: '90vh', width: '100%'}}>
-          <TaskIdMosaic
-            renderTile={(_id, path) => (
-              <TaskIdMosaicWindow path={path} title={'haha'}>
-                <h1>haha</h1>
-              </TaskIdMosaicWindow>
-            )}
-            initialValue={{
-              direction: 'row',
-              first: 'a',
-              second: 'b',
-              splitPercentage: 40,
-            }}
-          />
-        </div>
-      </div>
+      <Wrapper className={classNames('app', className)}>
+        <Menu />
+        <Manager />
+      </Wrapper>
     );
   }
+
+  static Wrapper = Wrapper;
 }

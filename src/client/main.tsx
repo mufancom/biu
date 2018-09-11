@@ -2,8 +2,8 @@ import {Provider} from 'mobx-react';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import * as services from './services';
 import {App} from './components/app';
+import * as services from './services';
 
 ReactDOM.render(
   <Provider {...services}>

@@ -172,6 +172,9 @@ export class TaskService {
       return;
     }
 
+    // tslint:disable-next-line
+    console.log(code);
+
     // TODO: add status tip to the block
   };
 

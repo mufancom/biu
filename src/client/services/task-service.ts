@@ -21,7 +21,7 @@ export interface TaskDict {
 }
 
 export interface InitializeData {
-  createdTask: Task[];
+  createdTasks: Task[];
   taskGroups: TaskGroupDict;
   taskNames: string[];
 }
@@ -38,6 +38,7 @@ export class TaskService {
 
   constructor(private socketIOService: SocketIOService) {
     this.socketIOService.on('connect', this.onConnect);
+    this.socketIOService.on('initialize', this.onInitialize);
   }
 
   onConnect = (): void => {
@@ -47,7 +48,7 @@ export class TaskService {
 
   @action
   onInitialize = ({
-    createdTask,
+    createdTasks,
     taskGroups,
     taskNames,
   }: InitializeData): void => {
@@ -60,7 +61,7 @@ export class TaskService {
       };
     }
 
-    for (let task of createdTask) {
+    for (let task of createdTasks) {
       let {id, name} = task;
 
       this.tasks[name] = task;

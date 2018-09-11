@@ -9,7 +9,7 @@ export interface Task {
   name: string;
   line?: string;
   running: boolean;
-  output?: string;
+  output: string;
 }
 
 export interface CreatedTask extends Task {
@@ -34,6 +34,21 @@ export interface InitializeData {
   taskNames: string[];
 }
 
+export interface ErrorData {
+  id: TaskId;
+  code: number;
+}
+
+export interface StdOutData {
+  id: TaskId;
+  html: string;
+}
+
+export interface StdErrData {
+  id: TaskId;
+  html: string;
+}
+
 export class TaskService {
   @observable
   taskGroups: TaskGroupDict = {};
@@ -52,6 +67,8 @@ export class TaskService {
     this.socketIOService.on('start', this.onStart);
     this.socketIOService.on('stop', this.onStop);
     this.socketIOService.on('restarting-on-change', this.onRestartOnChange);
+    this.socketIOService.on('stdout', this.onStdOut);
+    this.socketIOService.on('stderr', this.onStdErr);
   }
 
   onConnect = (): void => {
@@ -74,6 +91,7 @@ export class TaskService {
         this.tasks[name] = {
           name: taskName,
           running: false,
+          output: '',
         };
       }
     }
@@ -143,6 +161,42 @@ export class TaskService {
     }
 
     // TODO: add status tip to the block
+  };
+
+  onError = (data: ErrorData): void => {
+    let {id, code} = data;
+
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    // TODO: add status tip to the block
+  };
+
+  onStdOut = (data: StdOutData): void => {
+    let {id, html} = data;
+
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    task.output += html;
+  };
+
+  onStdErr = (data: StdErrData): void => {
+    let {id, html} = data;
+
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return;
+    }
+
+    task.output += html;
   };
 
   // private getTask(name: string): Task {

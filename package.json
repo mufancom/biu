@@ -38,6 +38,7 @@
     "bld/client/**"
   ],
   "dependencies": {
+    "@blueprintjs/core": "^3.5.1",
     "@makeflow/mobx-utils": "^0.1.0",
     "@types/react": "^16.4.13",
     "@types/react-dom": "^16.0.7",
@@ -51,9 +52,10 @@
     "npm-which": "^3.0.1",
     "open": "0.0.5",
     "prettier": "^1.14.2",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
+    "react": "^15.3.0 || 16",
+    "react-dom": "^15.3.0 || 16",
     "react-mosaic": "^0.0.20",
+    "react-mosaic-component": "^1.1.1",
     "shell-escape": "^0.2.0",
     "socket.io": "^2.1.1",
     "source-map-support": "^0.5.6",

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
 import * as services from './services';
-import {App} from './views/app';
+import {App} from './components/app';
 
 ReactDOM.render(
   <Provider {...services}>

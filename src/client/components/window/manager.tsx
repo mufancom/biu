@@ -7,20 +7,18 @@ import {styled} from 'theme';
 const Wrapper = styled.div``;
 
 export interface ManagerProps {
-    className?: string;
+  className?: string;
 }
 
 @observer
 export class Manager extends Component<ManagerProps> {
-    render(): ReactNode {
-        let {className} = this.props;
+  render(): ReactNode {
+    let {className} = this.props;
 
-        return (
-            <Wrapper className={classNames('manager', className)}>
-                Manager
-            </Wrapper>
-        );
-    }
+    return (
+      <Wrapper className={classNames('manager', className)}>Manager</Wrapper>
+    );
+  }
 
-    static Wrapper = Wrapper;
+  static Wrapper = Wrapper;
 }

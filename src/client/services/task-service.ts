@@ -105,6 +105,7 @@ export class TaskService {
     }
   };
 
+  @action
   onCreate = (task: CreatedTask): void => {
     let {id, name} = task;
 
@@ -115,6 +116,7 @@ export class TaskService {
     this.createdTaskMap.set(id, task);
   };
 
+  @action
   onClose = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
@@ -127,6 +129,7 @@ export class TaskService {
     this.createdTaskMap.delete(id);
   };
 
+  @action
   onStart = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
@@ -139,6 +142,7 @@ export class TaskService {
     task.running = true;
   };
 
+  @action
   onStop = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
@@ -151,6 +155,7 @@ export class TaskService {
     task.running = false;
   };
 
+  @action
   onRestartOnChange = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
@@ -163,6 +168,7 @@ export class TaskService {
     // TODO: add status tip to the block
   };
 
+  @action
   onError = (data: ErrorData): void => {
     let {id, code} = data;
 
@@ -178,6 +184,7 @@ export class TaskService {
     // TODO: add status tip to the block
   };
 
+  @action
   onStdOut = (data: StdOutData): void => {
     let {id, html} = data;
 
@@ -190,6 +197,7 @@ export class TaskService {
     task.output += html;
   };
 
+  @action
   onStdErr = (data: StdErrData): void => {
     let {id, html} = data;
 

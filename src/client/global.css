@@ -2,3 +2,7 @@ html,
 body {
   margin: 0;
 }
+
+html {
+  background-color: #eff3f5;
+}

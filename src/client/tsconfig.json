@@ -9,6 +9,5 @@
     "baseUrl": ".",
     "rootDir": ".",
     "outDir": "../../bld/client"
-  },
-  "exclude": ["bld"]
+  }
 }

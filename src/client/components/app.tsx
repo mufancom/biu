@@ -1,16 +1,13 @@
 import {observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
 import React, {Component, ReactNode} from 'react';
+
 import {styled} from 'theme';
 
 import {Menu} from './menu';
 import {Manager} from './window';
 
-const Wrapper = styled.div`
-  ${Menu.Wrapper} {
-    flex: 270px;
-  }
-`;
+const Wrapper = styled.div``;
 
 export interface AppProps {
   className?: string;
@@ -28,6 +25,4 @@ export class App extends Component<AppProps> {
       </Wrapper>
     );
   }
-
-  static Wrapper = Wrapper;
 }

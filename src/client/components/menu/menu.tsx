@@ -9,15 +9,19 @@ import {Logo} from './@logo';
 
 const Wrapper = styled.div`
   background-color: #fff;
+  display: flex;
+  flex-direction: column;
 
   ${Group.Wrapper} {
-    padding: 5px 26px;
+    padding: 5px 10px 5px 26px;
+    flex: 1;
   }
 `;
 
 const Header = styled.div`
   height: 36px;
   padding: 30px 20px 20px 20px;
+  flex: none;
 
   ${Logo.Wrapper} {
     margin: auto;

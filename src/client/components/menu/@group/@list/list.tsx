@@ -8,6 +8,8 @@ import {styled} from 'theme';
 import {ListItem} from './@list-item';
 
 const Wrapper = styled.div`
+  padding-right: 16px;
+
   ${ListItem.Wrapper} {
     margin-bottom: 9px;
   }

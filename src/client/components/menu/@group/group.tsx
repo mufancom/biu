@@ -2,6 +2,7 @@ import {inject, observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
 import {action, entries, observable, values} from 'mobx';
 import React, {Component, ReactNode} from 'react';
+import Scrollbars from 'react-custom-scrollbars';
 
 import {
   Task,
@@ -15,10 +16,19 @@ import {GroupNav} from './@group-nav';
 import {List} from './@list';
 
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+
   ${GroupNav.Wrapper} {
     padding: 0 10px;
     margin-bottom: 13px;
+    flex: none;
   }
+`;
+
+const ScrollbarsWrapper = styled(Scrollbars)`
+  flex: 1;
+  margin-bottom: 20px;
 `;
 
 export interface GroupProps {
@@ -49,7 +59,9 @@ export class Group extends Component<GroupProps> {
           nowGroupName={this.nowGroupName}
           onGroupNavLinkClick={this.onGroupNavLinkClick}
         />
-        <List tasks={nowGroupTasks} />
+        <ScrollbarsWrapper autoHide autoHideTimeout={300}>
+          <List tasks={nowGroupTasks} />
+        </ScrollbarsWrapper>
       </Wrapper>
     );
   }

@@ -24,6 +24,7 @@ const Wrapper = styled.div`
   position: relative;
   display: flex;
   justify-content: space-between;
+  transition: all 0.3s;
 
   &::before {
     position: absolute;
@@ -34,10 +35,15 @@ const Wrapper = styled.div`
     bottom: 0;
     border-top-left-radius: 4px;
     border-bottom-left-radius: 4px;
+    transition: all 0.3s;
   }
 
   &.status-ready {
     opacity: 0.6;
+
+    &:hover {
+      opacity: 0.8;
+    }
   }
 
   &.status-running::before {
@@ -106,16 +112,20 @@ export class ListItem extends Component<ListItemProps> {
             undefined
           )}
           {status === TaskStatus.running ? (
-            <ListItemRestartButton />
+            <ListItemRestartButton onClick={this.onRestartButtonClick} />
           ) : (
             undefined
           )}
           {status === TaskStatus.running || status === TaskStatus.restarting ? (
-            <ListItemStopButton />
+            <ListItemStopButton onClick={this.onStopButtonClick} />
           ) : (
             undefined
           )}
-          {status !== TaskStatus.ready ? <ListItemCloseButton /> : undefined}
+          {status !== TaskStatus.ready ? (
+            <ListItemCloseButton onClick={this.onCloseButtonClick} />
+          ) : (
+            undefined
+          )}
         </ItemOperationArea>
       </Wrapper>
     );
@@ -125,6 +135,24 @@ export class ListItem extends Component<ListItemProps> {
     let {task} = this.props;
 
     this.taskService.start(task);
+  };
+
+  onRestartButtonClick = (): void => {
+    let {task} = this.props;
+
+    this.taskService.restart(task);
+  };
+
+  onStopButtonClick = (): void => {
+    let {task} = this.props;
+
+    this.taskService.stop(task);
+  };
+
+  onCloseButtonClick = (): void => {
+    let {task} = this.props;
+
+    this.taskService.close(task);
   };
 
   static Wrapper = Wrapper;

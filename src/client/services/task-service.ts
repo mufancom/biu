@@ -81,7 +81,7 @@ export class TaskService {
     this.socketIOService.on('stderr', this.onStdErr);
   }
 
-  isCreated(task: Task): boolean {
+  isCreated(task: Task): task is CreatedTask {
     let {id} = task;
 
     return typeof id !== 'undefined' && this.createdTaskMap.has(id);
@@ -97,6 +97,47 @@ export class TaskService {
 
       this.socketIOService.emit('start', {id});
     }
+  }
+
+  @action
+  restart(task: Task): void {
+    if (!this.isCreated(task)) {
+      return;
+    }
+
+    let {id} = task;
+
+    task.status = TaskStatus.restarting;
+
+    this.socketIOService.emit('restart', {id});
+  }
+
+  @action
+  stop(task: Task): void {
+    if (!this.isCreated(task)) {
+      return;
+    }
+
+    let {id} = task;
+
+    task.status = TaskStatus.stopping;
+
+    this.socketIOService.emit('stop', {id});
+  }
+
+  @action
+  close(task: Task): void {
+    if (!this.isCreated(task)) {
+      return;
+    }
+
+    let {id, running} = task;
+
+    if (running) {
+      task.status = TaskStatus.stopping;
+    }
+
+    this.socketIOService.emit('close', {id});
   }
 
   private getCreatedTaskByTaskId(id: TaskId): Task | undefined {
@@ -164,7 +205,7 @@ export class TaskService {
   private onClose = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
-    let task = this.createdTaskMap.get(id);
+    let task = this.getCreatedTaskByTaskId(id);
 
     if (!task) {
       return;
@@ -207,7 +248,7 @@ export class TaskService {
   private onRestartOnChange = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
-    let task = this.createdTaskMap.get(id);
+    let task = this.getCreatedTaskByTaskId(id);
 
     if (!task) {
       return;
@@ -220,7 +261,7 @@ export class TaskService {
   private onError = (data: ErrorData): void => {
     let {id, code} = data;
 
-    let task = this.createdTaskMap.get(id);
+    let task = this.getCreatedTaskByTaskId(id);
 
     if (!task) {
       return;
@@ -236,7 +277,7 @@ export class TaskService {
   private onStdOut = (data: StdOutData): void => {
     let {id, html} = data;
 
-    let task = this.createdTaskMap.get(id);
+    let task = this.getCreatedTaskByTaskId(id);
 
     if (!task) {
       return;
@@ -249,7 +290,7 @@ export class TaskService {
   private onStdErr = (data: StdErrData): void => {
     let {id, html} = data;
 
-    let task = this.createdTaskMap.get(id);
+    let task = this.getCreatedTaskByTaskId(id);
 
     if (!task) {
       return;

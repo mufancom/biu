@@ -7,7 +7,22 @@ import {styled} from 'theme';
 import {Menu} from './menu';
 import {Manager} from './window';
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+
+  ${Menu.Wrapper} {
+    width: 320px;
+    height: 100vh;
+  }
+
+  ${Manager.Wrapper} {
+    flex: 1;
+  }
+`;
 
 export interface AppProps {
   className?: string;

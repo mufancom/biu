@@ -5,4 +5,10 @@ body {
 
 html {
   background-color: #eff3f5;
+  font-family: Helvetica, 'Hiragino Sans GB', 'Microsoft Yahei UI', '微软雅黑',
+    Arial, sans-serif;
+}
+
+a {
+  transition: all 0.3s;
 }

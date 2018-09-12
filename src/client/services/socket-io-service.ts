@@ -26,6 +26,10 @@ export class SocketIOService {
     return {event, listener};
   }
 
+  emit(event: string, ...args: any[]): void {
+    this.client.emit(event, ...args);
+  }
+
   removeListener(listenerId: EventListenerId): void {
     let {event, listener} = listenerId;
 

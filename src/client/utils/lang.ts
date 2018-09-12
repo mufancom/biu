@@ -1,9 +1,9 @@
 import {ReactNode, ReactNodeArray} from 'react';
 
 export type ObjectMapCallback<T extends object, K extends keyof T> = (
-  this: T,
   value: T[K],
   key: K,
+  object: T,
 ) => ReactNode;
 
 export function mapObject<T extends object>(
@@ -16,7 +16,7 @@ export function mapObject<T extends object>(
 
   for (let key of keys) {
     if (callback && key in object) {
-      let node = callback.call(object, (object as any)[key], key);
+      let node = callback((object as any)[key], key as keyof object, object);
 
       nodes.push(node);
     }

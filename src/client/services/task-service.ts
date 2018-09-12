@@ -4,11 +4,20 @@ import {SocketIOService} from './socket-io-service';
 
 export type TaskId = string;
 
+export enum TaskStatus {
+  ready,
+  running,
+  stopped,
+  stopping,
+  restarting,
+}
+
 export interface Task {
   id?: TaskId;
   name: string;
   line?: string;
   running: boolean;
+  status: TaskStatus;
   output: string;
 }
 
@@ -67,17 +76,48 @@ export class TaskService {
     this.socketIOService.on('start', this.onStart);
     this.socketIOService.on('stop', this.onStop);
     this.socketIOService.on('restarting-on-change', this.onRestartOnChange);
+    this.socketIOService.on('error', this.onError);
     this.socketIOService.on('stdout', this.onStdOut);
     this.socketIOService.on('stderr', this.onStdErr);
   }
 
-  onConnect = (): void => {
+  isCreated(task: Task): boolean {
+    let {id} = task;
+
+    return typeof id !== 'undefined' && this.createdTaskMap.has(id);
+  }
+
+  start(task: Task): void {
+    if (!this.isCreated(task)) {
+      let {name} = task;
+
+      this.socketIOService.emit('create', {names: [name]});
+    } else if (!task.running) {
+      let {id} = task;
+
+      this.socketIOService.emit('start', {id});
+    }
+  }
+
+  private getCreatedTaskByTaskId(id: TaskId): Task | undefined {
+    let task = this.createdTaskMap.get(id);
+
+    if (!task) {
+      return undefined;
+    }
+
+    let {name} = task;
+
+    return this.tasks[name];
+  }
+
+  private onConnect = (): void => {
     // tslint:disable-next-line
     console.log('connected');
   };
 
   @action
-  onInitialize = ({
+  private onInitialize = ({
     createdTasks,
     taskGroups,
     taskNames,
@@ -88,9 +128,10 @@ export class TaskService {
 
     if (taskNames) {
       for (let taskName of taskNames) {
-        this.tasks[name] = {
+        this.tasks[taskName] = {
           name: taskName,
           running: false,
+          status: TaskStatus.ready,
           output: '',
         };
       }
@@ -99,6 +140,8 @@ export class TaskService {
     for (let task of createdTasks) {
       let {id, name} = task;
 
+      task.status = task.running ? TaskStatus.running : TaskStatus.stopped;
+
       this.tasks[name] = task;
 
       this.createdTaskMap.set(id, task);
@@ -106,10 +149,11 @@ export class TaskService {
   };
 
   @action
-  onCreate = (task: CreatedTask): void => {
+  private onCreate = (task: CreatedTask): void => {
     let {id, name} = task;
 
     task.running = true;
+    task.status = TaskStatus.running;
 
     this.tasks[name] = task;
 
@@ -117,7 +161,7 @@ export class TaskService {
   };
 
   @action
-  onClose = (taskRef: TaskRef): void => {
+  private onClose = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
     let task = this.createdTaskMap.get(id);
@@ -126,37 +170,41 @@ export class TaskService {
       return;
     }
 
+    task.status = TaskStatus.ready;
+
     this.createdTaskMap.delete(id);
   };
 
   @action
-  onStart = (taskRef: TaskRef): void => {
+  private onStart = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
-    let task = this.createdTaskMap.get(id);
+    let task = this.getCreatedTaskByTaskId(id);
 
     if (!task) {
       return;
     }
 
     task.running = true;
+    task.status = TaskStatus.running;
   };
 
   @action
-  onStop = (taskRef: TaskRef): void => {
+  private onStop = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
-    let task = this.createdTaskMap.get(id);
+    let task = this.getCreatedTaskByTaskId(id);
 
     if (!task) {
       return;
     }
 
     task.running = false;
+    task.status = TaskStatus.stopped;
   };
 
   @action
-  onRestartOnChange = (taskRef: TaskRef): void => {
+  private onRestartOnChange = (taskRef: TaskRef): void => {
     let {id} = taskRef;
 
     let task = this.createdTaskMap.get(id);
@@ -169,7 +217,7 @@ export class TaskService {
   };
 
   @action
-  onError = (data: ErrorData): void => {
+  private onError = (data: ErrorData): void => {
     let {id, code} = data;
 
     let task = this.createdTaskMap.get(id);
@@ -185,7 +233,7 @@ export class TaskService {
   };
 
   @action
-  onStdOut = (data: StdOutData): void => {
+  private onStdOut = (data: StdOutData): void => {
     let {id, html} = data;
 
     let task = this.createdTaskMap.get(id);
@@ -198,7 +246,7 @@ export class TaskService {
   };
 
   @action
-  onStdErr = (data: StdErrData): void => {
+  private onStdErr = (data: StdErrData): void => {
     let {id, html} = data;
 
     let task = this.createdTaskMap.get(id);
@@ -220,4 +268,21 @@ export class TaskService {
   //
   //   return this.tasks[name];
   // }
+}
+
+export function getTaskStatus(task: Task): string {
+  let {status, line} = task;
+
+  switch (status) {
+    case TaskStatus.ready:
+      return 'ready';
+    case TaskStatus.running:
+      return line ? line : 'running';
+    case TaskStatus.stopped:
+      return 'stopped';
+    case TaskStatus.stopping:
+      return 'stopping';
+    case TaskStatus.restarting:
+      return 'restarting';
+  }
 }

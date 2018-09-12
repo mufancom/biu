@@ -1,0 +1,7 @@
+{
+  "extends": "../node_modules/@magicspace/configs/tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "files": ["dtpl.ts"]
+}

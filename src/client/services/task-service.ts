@@ -1,4 +1,19 @@
+import _ from 'lodash';
 import {action, observable} from 'mobx';
+import {
+  Corner,
+  MosaicBranch,
+  MosaicDirection,
+  MosaicNode,
+  MosaicParent,
+  MosaicUpdate,
+  createRemoveUpdate,
+  getLeaves,
+  getNodeAtPath,
+  getOtherDirection,
+  getPathToCorner,
+  updateTree,
+} from 'react-mosaic-component';
 
 import {SocketIOService} from './socket-io-service';
 
@@ -67,6 +82,9 @@ export class TaskService {
 
   @observable
   createdTaskMap = new Map<TaskId, CreatedTask>();
+
+  @observable
+  currentNode: MosaicNode<TaskId> | null = null;
 
   constructor(private socketIOService: SocketIOService) {
     this.socketIOService.on('connect', this.onConnect);
@@ -140,7 +158,7 @@ export class TaskService {
     this.socketIOService.emit('close', {id});
   }
 
-  private getCreatedTaskByTaskId(id: TaskId): Task | undefined {
+  private getCreatedTaskByTaskId(id: TaskId): CreatedTask | undefined {
     let task = this.createdTaskMap.get(id);
 
     if (!task) {
@@ -149,9 +167,81 @@ export class TaskService {
 
     let {name} = task;
 
-    return this.tasks[name];
+    return this.tasks[name] as CreatedTask;
   }
 
+  @action
+  private freshCurrentNode(): void {
+    let createdTaskIds = Array.from(this.createdTaskMap.keys());
+    let currentNodeIds = getLeaves(this.currentNode);
+
+    let newTaskIds = _.difference(createdTaskIds, currentNodeIds);
+    let removedTaskIds = _.difference(currentNodeIds, createdTaskIds);
+
+    for (let taskId of removedTaskIds) {
+      this.closeTaskWindow(taskId);
+    }
+
+    for (let newTaskId of newTaskIds) {
+      this.addToBottomRight(newTaskId);
+    }
+  }
+
+  @action
+  private addToBottomRight = (taskId: TaskId) => {
+    let currentNode = this.currentNode;
+
+    if (currentNode) {
+      const path = getPathToCorner(currentNode, Corner.BOTTOM_RIGHT);
+      const parent = getNodeAtPath(
+        currentNode,
+        _.dropRight(path),
+      ) as MosaicParent<TaskId>;
+      const destination = getNodeAtPath(currentNode, path) as MosaicNode<
+        TaskId
+      >;
+      const direction: MosaicDirection = parent
+        ? getOtherDirection(parent.direction)
+        : 'row';
+      let first: MosaicNode<TaskId>;
+      let second: MosaicNode<TaskId>;
+
+      first = destination;
+      second = taskId;
+
+      this.currentNode = updateTree(currentNode, [
+        {
+          path,
+          spec: {
+            $set: {
+              direction,
+              first,
+              second,
+            },
+          },
+        },
+      ]);
+    } else {
+      this.currentNode = taskId;
+    }
+  };
+
+  @action
+  private closeTaskWindow(taskId: TaskId): void {
+    if (this.currentNode) {
+      let path = getPathByTaskIdInNode(this.currentNode, taskId);
+
+      if (typeof path === 'object') {
+        let update = createRemoveUpdate(this.currentNode, path);
+
+        this.currentNode = updateTree(this.currentNode, [update]);
+      } else if (path === 'clean') {
+        this.currentNode = null;
+      }
+    }
+  }
+
+  @action
   private onConnect = (): void => {
     // tslint:disable-next-line
     console.log('connected');
@@ -183,10 +273,14 @@ export class TaskService {
 
       task.status = task.running ? TaskStatus.running : TaskStatus.stopped;
 
+      task.output = '';
+
       this.tasks[name] = task;
 
       this.createdTaskMap.set(id, task);
     }
+
+    this.freshCurrentNode();
   };
 
   @action
@@ -199,6 +293,8 @@ export class TaskService {
     this.tasks[name] = task;
 
     this.createdTaskMap.set(id, task);
+
+    this.freshCurrentNode();
   };
 
   @action
@@ -214,6 +310,8 @@ export class TaskService {
     task.status = TaskStatus.ready;
 
     this.createdTaskMap.delete(id);
+
+    this.freshCurrentNode();
   };
 
   @action
@@ -228,6 +326,8 @@ export class TaskService {
 
     task.running = true;
     task.status = TaskStatus.running;
+
+    this.createdTaskMap.set(id, task);
   };
 
   @action
@@ -242,6 +342,8 @@ export class TaskService {
 
     task.running = false;
     task.status = TaskStatus.stopped;
+
+    this.createdTaskMap.set(id, task);
   };
 
   @action
@@ -283,7 +385,11 @@ export class TaskService {
       return;
     }
 
-    task.output += html;
+    if (html) {
+      task.output = appendOutput(task.output, html);
+    }
+
+    this.createdTaskMap.set(id, task);
   };
 
   @action
@@ -296,7 +402,11 @@ export class TaskService {
       return;
     }
 
-    task.output += html;
+    if (html) {
+      task.output = appendOutput(task.output, html);
+    }
+
+    this.createdTaskMap.set(id, task);
   };
 
   // private getTask(name: string): Task {
@@ -311,7 +421,11 @@ export class TaskService {
   // }
 }
 
-export function getTaskStatus(task: Task): string {
+export function getTaskStatus(task: Task | undefined): string {
+  if (!task) {
+    return 'closed';
+  }
+
   let {status, line} = task;
 
   switch (status) {
@@ -326,4 +440,51 @@ export function getTaskStatus(task: Task): string {
     case TaskStatus.restarting:
       return 'restarting';
   }
+}
+
+export function appendOutput(
+  output: string | undefined,
+  suffix: string,
+): string {
+  if (output) {
+    return output + suffix;
+  } else {
+    return suffix;
+  }
+}
+
+export function getPathByTaskIdInNode(
+  node: MosaicNode<TaskId> | TaskId | undefined,
+  taskId: TaskId,
+  path?: string,
+): MosaicBranch[] | 'clean' | undefined {
+  if (typeof node === 'string' && node === taskId) {
+    if (path) {
+      return path.split('|') as MosaicBranch[];
+    } else {
+      return 'clean';
+    }
+  } else if (typeof node === 'object') {
+    let firstBranchResult = getPathByTaskIdInNode(
+      node['first'],
+      taskId,
+      path ? `${path}|first` : 'first',
+    );
+
+    if (firstBranchResult) {
+      return firstBranchResult;
+    }
+
+    let secondBranchResult = getPathByTaskIdInNode(
+      node['second'],
+      taskId,
+      path ? `${path}|second` : 'second',
+    );
+
+    if (secondBranchResult) {
+      return secondBranchResult;
+    }
+  }
+
+  return undefined;
 }

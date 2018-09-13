@@ -4,7 +4,7 @@ import {action} from 'mobx';
 import React, {Component, ReactNode} from 'react';
 import {ExpandButton, MosaicBranch, MosaicWindow} from 'react-mosaic-component';
 
-import {TaskId, TaskService, TaskStatus} from 'services/task-service';
+import {Task, TaskId, TaskService, getTaskStatus} from 'services/task-service';
 import {styled} from 'theme';
 
 import {Block} from './@block';
@@ -50,42 +50,38 @@ export class Window extends Component<WindowProps> {
   render(): ReactNode {
     let {className, id, path} = this.props;
 
-    let has = this.taskService.createdTaskMap.get(id);
+    let task = this.taskService.createdTaskMap.get(id)!;
+
+    console.log(task);
+
+    let {name, output} = task;
 
     return (
       <Wrapper className={classNames('window', className)}>
         <WindowWrapper
           path={path}
-          title="test"
+          title={name}
           toolbarControls={
             <>
               <ExpandButton />
               <WindowRemoveButton
                 onClick={() => {
-                  this.onRemoveButtonClick(id);
+                  this.onRemoveButtonClick(task);
                 }}
               />
             </>
           }
         >
-          <WindowSubTitle>
-            tsc -p src/cli -w {has ? 'yes' : 'no'}
-          </WindowSubTitle>
-          <Block />
+          <WindowSubTitle>{getTaskStatus(task)}</WindowSubTitle>
+          <Block html={output} />
         </WindowWrapper>
       </Wrapper>
     );
   }
 
   @action
-  onRemoveButtonClick = (id: TaskId): void => {
-    this.taskService.createdTaskMap.set(id, {
-      name: 'haha',
-      status: TaskStatus.ready,
-      running: true,
-      id: '23',
-      output: '',
-    });
+  onRemoveButtonClick = (task: Task): void => {
+    this.taskService.close(task);
   };
 
   static Wrapper = Wrapper;

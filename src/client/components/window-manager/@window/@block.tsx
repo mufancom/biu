@@ -38,17 +38,19 @@ const ScrollbarsWrapper = styled(Scrollbars)``;
 
 const OutputWrapper = styled.div`
   padding: 7px;
+  font-family: monospace;
   word-break: break-all;
 `;
 
 export interface BlockProps {
   className?: string;
+  html: string;
 }
 
 @observer
 export class Block extends Component<BlockProps> {
   render(): ReactNode {
-    let {className} = this.props;
+    let {className, html} = this.props;
 
     return (
       <Wrapper className={classNames('block', className)}>
@@ -70,63 +72,7 @@ export class Block extends Component<BlockProps> {
             />
           )}
         >
-          <OutputWrapper>
-            > Block
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD LSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-            <br />
-            bLSASD
-          </OutputWrapper>
+          <OutputWrapper dangerouslySetInnerHTML={{__html: html}} />
         </ScrollbarsWrapper>
       </Wrapper>
     );

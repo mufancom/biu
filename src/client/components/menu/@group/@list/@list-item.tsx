@@ -39,7 +39,7 @@ const Wrapper = styled.div`
   }
 
   &.status-ready {
-    opacity: 0.6;
+    opacity: 0.5;
 
     &:hover {
       opacity: 0.8;

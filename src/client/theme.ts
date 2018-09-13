@@ -51,6 +51,7 @@ export const theme = {
   safeAccent: safeAccentLightnessModifier,
   gray: grayLightnessModifier,
   light: light.hex(),
+  washedOutBlack: '#31363D',
   text: {
     navPrimary: '#333',
     navRegular: '#444',
@@ -60,6 +61,7 @@ export const theme = {
     regular: '#5e6d82',
     secondary: '#909399',
     placeholder: '#C0C4CC',
+    hint: '#c8c8c8',
   },
   border: {
     base: '#dcdfe6',

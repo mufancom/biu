@@ -6,7 +6,6 @@ import {
   MosaicDirection,
   MosaicNode,
   MosaicParent,
-  MosaicUpdate,
   createRemoveUpdate,
   getLeaves,
   getNodeAtPath,
@@ -14,6 +13,8 @@ import {
   getPathToCorner,
   updateTree,
 } from 'react-mosaic-component';
+
+import {appendOutput, outputError, outputInfo} from 'utils/output';
 
 import {SocketIOService} from './socket-io-service';
 
@@ -60,7 +61,12 @@ export interface InitializeData {
 
 export interface ErrorData {
   id: TaskId;
-  code: number;
+  error: string;
+}
+
+export interface ExitData {
+  id: TaskId;
+  code?: string;
 }
 
 export interface StdOutData {
@@ -95,6 +101,7 @@ export class TaskService {
     this.socketIOService.on('stop', this.onStop);
     this.socketIOService.on('restarting-on-change', this.onRestartOnChange);
     this.socketIOService.on('error', this.onError);
+    this.socketIOService.on('exit', this.onExit);
     this.socketIOService.on('stdout', this.onStdOut);
     this.socketIOService.on('stderr', this.onStdErr);
   }
@@ -327,6 +334,12 @@ export class TaskService {
     task.running = true;
     task.status = TaskStatus.running;
 
+    task.output = appendOutput(
+      task.output,
+      outputInfo('[biu] Task started.'),
+      'system',
+    );
+
     this.createdTaskMap.set(id, task);
   };
 
@@ -361,6 +374,25 @@ export class TaskService {
 
   @action
   private onError = (data: ErrorData): void => {
+    let {id, error} = data;
+
+    let task = this.getCreatedTaskByTaskId(id);
+
+    if (!task) {
+      return;
+    }
+
+    task.output = appendOutput(
+      task.output,
+      outputError(error.replace(/\n/g, '<br />')),
+      'system',
+    );
+
+    this.createdTaskMap.set(id, task);
+  };
+
+  @action
+  private onExit = (data: ExitData): void => {
     let {id, code} = data;
 
     let task = this.getCreatedTaskByTaskId(id);
@@ -369,10 +401,13 @@ export class TaskService {
       return;
     }
 
-    // tslint:disable-next-line
-    console.log(code);
+    let text = code
+      ? `[biu] Task exited with code ${data.code}.`
+      : '[biu] Task exited.';
 
-    // TODO: add status tip to the block
+    task.output = appendOutput(task.output, outputInfo(text), 'system');
+
+    this.createdTaskMap.set(id, task);
   };
 
   @action
@@ -439,17 +474,6 @@ export function getTaskStatus(task: Task | undefined): string {
       return 'stopping';
     case TaskStatus.restarting:
       return 'restarting';
-  }
-}
-
-export function appendOutput(
-  output: string | undefined,
-  suffix: string,
-): string {
-  if (output) {
-    return output + suffix;
-  } else {
-    return suffix;
   }
 }
 

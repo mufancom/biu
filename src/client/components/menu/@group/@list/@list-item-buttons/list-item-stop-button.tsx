@@ -27,6 +27,7 @@ export class ListItemStopButton extends Component<ListItemStopButtonProps> {
           className="hover-red"
           icon="power-off"
           onClick={onClick}
+          title="Stop"
         />
       </Wrapper>
     );

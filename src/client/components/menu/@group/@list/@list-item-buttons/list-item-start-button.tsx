@@ -23,7 +23,12 @@ export class ListItemStartButton extends Component<ListItemStartButtonProps> {
 
     return (
       <Wrapper className={classNames('list-item-start', className)}>
-        <ListItemButton className="hover-green" icon="play" onClick={onClick} />
+        <ListItemButton
+          className="hover-green"
+          icon="play"
+          onClick={onClick}
+          title="Start"
+        />
       </Wrapper>
     );
   }

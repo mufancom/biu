@@ -37,18 +37,20 @@ const Wrapper = styled.a`
 export interface ListItemButtonProps {
   className?: string;
   icon: string;
+  title?: string;
   onClick?(): void;
 }
 
 @observer
 export class ListItemButton extends Component<ListItemButtonProps> {
   render(): ReactNode {
-    let {className, icon, onClick} = this.props;
+    let {className, icon, onClick, title} = this.props;
 
     return (
       <Wrapper
         className={classNames('list-item-button', className)}
         onClick={onClick}
+        title={title}
       >
         <Icon name={icon} />
       </Wrapper>

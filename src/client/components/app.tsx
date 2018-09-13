@@ -5,7 +5,7 @@ import React, {Component, ReactNode} from 'react';
 import {styled} from 'theme';
 
 import {Menu} from './menu';
-import {Manager} from './window';
+import {Manager} from './window-manager';
 
 const Wrapper = styled.div`
   display: flex;

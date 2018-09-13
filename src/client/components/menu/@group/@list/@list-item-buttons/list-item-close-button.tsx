@@ -23,7 +23,12 @@ export class ListItemCloseButton extends Component<ListItemCloseButtonProps> {
 
     return (
       <Wrapper className={classNames('list-item-close-button', className)}>
-        <ListItemButton className="red" icon="close" onClick={onClick} />
+        <ListItemButton
+          className="red"
+          icon="close"
+          onClick={onClick}
+          title="Close"
+        />
       </Wrapper>
     );
   }

@@ -29,6 +29,7 @@ export class ListItemRestartButton extends Component<
           className="hover-yellow"
           icon="repeat"
           onClick={onClick}
+          title="Restart"
         />
       </Wrapper>
     );

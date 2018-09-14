@@ -1,5 +1,5 @@
 {
-  "watch": ["bld/cli"],
+  "watch": ["bld/cli", "./.biu.json"],
   "ext": "js",
   "exec": "yarn start-cli"
 }

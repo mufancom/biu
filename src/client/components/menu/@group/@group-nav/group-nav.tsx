@@ -1,14 +1,23 @@
 import {observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
 import React, {Component, ReactNode} from 'react';
+import ScrollHorizontal from 'react-scroll-horizontal';
 
 import {styled} from 'theme';
 
 import {GroupNavLink} from './@group-nav-link';
 
 const Wrapper = styled.div`
+  height: 17px;
+
   &.hidden {
     display: none;
+  }
+
+  .scroll-horizontal-restricted {
+    & > div {
+      min-width: 100%;
+    }
   }
 `;
 
@@ -29,17 +38,22 @@ export class GroupNav extends Component<GroupNavProps> {
         className={classNames(
           'group-nav',
           className,
-          groupNames ? undefined : 'hidden',
+          groupNames && groupNames.length ? undefined : 'hidden',
         )}
       >
-        {groupNames.map(name => (
-          <GroupNavLink
-            key={name}
-            name={name}
-            active={nowGroupName === name}
-            onClick={onGroupNavLinkClick}
-          />
-        ))}
+        <ScrollHorizontal
+          reverseScroll
+          className="scroll-horizontal-restricted"
+        >
+          {groupNames.map(name => (
+            <GroupNavLink
+              key={name}
+              name={name}
+              active={nowGroupName === name}
+              onClick={onGroupNavLinkClick}
+            />
+          ))}
+        </ScrollHorizontal>
       </Wrapper>
     );
   }

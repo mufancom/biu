@@ -60,6 +60,7 @@
     "react-fa": "^5.0.0",
     "react-mosaic": "^0.0.20",
     "react-mosaic-component": "^1.1.1",
+    "react-scroll-horizontal": "^1.5.1",
     "shell-escape": "^0.2.0",
     "socket.io": "^2.1.1",
     "source-map-support": "^0.5.6",

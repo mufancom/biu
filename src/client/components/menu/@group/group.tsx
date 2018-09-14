@@ -18,10 +18,13 @@ import {List} from './@list';
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  position: relative;
 
   ${GroupNav.Wrapper} {
     padding: 0 10px;
     margin-bottom: 13px;
+    margin-left: 10px;
+    margin-right: 15px;
     flex: none;
   }
 `;
@@ -96,7 +99,11 @@ export class Group extends Component<GroupProps> {
 
   @action
   onGroupNavLinkClick = (name: string): void => {
-    this.nowGroupName = name;
+    if (this.nowGroupName == name) {
+      this.nowGroupName = undefined;
+    } else {
+      this.nowGroupName = name;
+    }
   };
 
   static Wrapper = Wrapper;

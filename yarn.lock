@@ -3872,6 +3872,10 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+performance-now@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-0.2.0.tgz#33ef30c5c77d4ea21c5a53869d91b56d8f2555e5"
+
 performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
@@ -4603,6 +4607,14 @@ react-mosaic@^0.0.20:
     prop-types "^15.6.0"
     threads "^0.8.0"
 
+react-motion@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/react-motion/-/react-motion-0.5.2.tgz#0dd3a69e411316567927917c6626551ba0607316"
+  dependencies:
+    performance-now "^0.2.0"
+    prop-types "^15.5.8"
+    raf "^3.1.0"
+
 react-popper@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-1.0.2.tgz#0e72f338b7f15ab9f9ec884e36ae0dad78a3e301"
@@ -4613,6 +4625,12 @@ react-popper@^1.0.0:
     prop-types "^15.6.1"
     typed-styles "^0.0.5"
     warning "^3.0.0"
+
+react-scroll-horizontal@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/react-scroll-horizontal/-/react-scroll-horizontal-1.5.1.tgz#b6ed999c468bc544d6b770f552f1fae3991eab8b"
+  dependencies:
+    react-motion "^0.5.2"
 
 react-transition-group@^2.2.1:
   version "2.4.0"

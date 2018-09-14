@@ -9,6 +9,7 @@ const Wrapper = styled.a`
   margin-right: 7px;
   font-size: 12px;
   cursor: pointer;
+  user-select: none;
 
   &:hover {
     color: ${props => props.theme.text.navPlaceholder};

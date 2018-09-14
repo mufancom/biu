@@ -1,5 +1,6 @@
 import {inject, observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
+import {action} from 'mobx';
 import React, {Component, ReactNode} from 'react';
 
 import {
@@ -25,6 +26,12 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
   transition: all 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 0 8px 0 rgba(232, 237, 250, 0.6),
+      0 2px 4px 0 rgba(232, 237, 250, 0.5);
+  }
 
   &::before {
     position: absolute;
@@ -100,6 +107,9 @@ export class ListItem extends Component<ListItemProps> {
           className,
           getStatusBarClassName(status),
         )}
+        onClick={this.onItemClick}
+        onMouseEnter={this.onItemMouseEnter}
+        onMouseLeave={this.onItemMouseLeave}
       >
         <ItemTitleArea>
           <Title>{task.name}</Title>
@@ -130,6 +140,41 @@ export class ListItem extends Component<ListItemProps> {
       </Wrapper>
     );
   }
+
+  onItemClick = (): void => {
+    let {status} = this.props.task;
+
+    switch (status) {
+      case TaskStatus.ready:
+      case TaskStatus.stopped:
+        this.onStartButtonClick();
+        break;
+      case TaskStatus.running:
+      case TaskStatus.restarting:
+        this.onStopButtonClick();
+        break;
+    }
+
+    this.onItemMouseEnter();
+  };
+
+  @action
+  onItemMouseEnter = (): void => {
+    let {id} = this.props.task;
+
+    if (id) {
+      this.taskService.currentHoverTaskId = id;
+    }
+  };
+
+  @action
+  onItemMouseLeave = (): void => {
+    let {id} = this.props.task;
+
+    if (id && this.taskService.currentHoverTaskId === id) {
+      this.taskService.currentHoverTaskId = undefined;
+    }
+  };
 
   onStartButtonClick = (): void => {
     let {task} = this.props;

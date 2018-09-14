@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   flex-direction: column;
 
   ${Group.Wrapper} {
-    padding: 5px 10px 5px 26px;
+    padding: 5px 10px 5px 16px;
     flex: 1;
   }
 `;

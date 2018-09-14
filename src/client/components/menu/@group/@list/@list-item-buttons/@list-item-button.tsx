@@ -44,18 +44,28 @@ export interface ListItemButtonProps {
 @observer
 export class ListItemButton extends Component<ListItemButtonProps> {
   render(): ReactNode {
-    let {className, icon, onClick, title} = this.props;
+    let {className, icon, title} = this.props;
 
     return (
       <Wrapper
         className={classNames('list-item-button', className)}
-        onClick={onClick}
+        onClick={this.onInnerClick}
         title={title}
       >
         <Icon name={icon} />
       </Wrapper>
     );
   }
+
+  onInnerClick = (event: React.MouseEvent): void => {
+    event.preventDefault();
+
+    let {onClick} = this.props;
+
+    if (onClick) {
+      onClick();
+    }
+  };
 
   static Wrapper = Wrapper;
 }

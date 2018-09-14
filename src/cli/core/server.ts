@@ -265,11 +265,7 @@ export class Server extends EventEmitter {
     }
 
     for (let [index, line] of lines.entries()) {
-      console.log(line);
-
       let lineHtml = taskInfo.converter.toHtml(line);
-
-      console.log(lineHtml);
 
       if (index === lines.length - 1 && !dataCompleted) {
         html += `<div data-type='${event}' data-uncompleted="true">${lineHtml}</div>`;

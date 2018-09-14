@@ -9,6 +9,7 @@ import {ListItem} from './@list-item';
 
 const Wrapper = styled.div`
   padding-right: 16px;
+  padding-left: 10px;
 
   ${ListItem.Wrapper} {
     margin-bottom: 9px;

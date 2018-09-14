@@ -41,3 +41,31 @@ a {
 ::-webkit-scrollbar-thumb:vertical:active {
   background-color: #9da1a5;
 }
+
+@keyframes pulse {
+  from {
+    transform: scale3d(1, 1, 1);
+    opacity: 1;
+  }
+
+  35% {
+    transform: scale3d(1.03, 1.03, 1.03);
+    opacity: 0.95;
+  }
+
+  to {
+    transform: scale3d(1, 1, 1);
+    opacity: 1;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale3d(0.5, 0.5, 0.5);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}

@@ -6,6 +6,7 @@ import {
   MosaicDirection,
   MosaicNode,
   MosaicParent,
+  createBalancedTreeFromLeaves,
   createRemoveUpdate,
   getLeaves,
   getNodeAtPath,
@@ -91,6 +92,9 @@ export class TaskService {
 
   @observable
   currentNode: MosaicNode<TaskId> | null = null;
+
+  @observable
+  currentHoverTaskId: TaskId | undefined;
 
   constructor(private socketIOService: SocketIOService) {
     this.socketIOService.on('connect', this.onConnect);
@@ -260,6 +264,12 @@ export class TaskService {
     taskGroups,
     taskNames,
   }: InitializeData): void => {
+    this.taskGroups = {};
+    this.tasks = {};
+    this.createdTaskMap = new Map<TaskId, CreatedTask>();
+    this.currentNode = null;
+    this.currentHoverTaskId = undefined;
+
     if (taskGroups) {
       this.taskGroups = taskGroups;
     }
@@ -275,6 +285,8 @@ export class TaskService {
       }
     }
 
+    let createdLeaves: TaskId[] = [];
+
     for (let task of createdTasks) {
       let {id, name} = task;
 
@@ -285,7 +297,11 @@ export class TaskService {
       this.tasks[name] = task;
 
       this.createdTaskMap.set(id, task);
+
+      createdLeaves.push(id);
     }
+
+    this.currentNode = createBalancedTreeFromLeaves(createdLeaves);
 
     this.freshCurrentNode();
   };
@@ -443,17 +459,6 @@ export class TaskService {
 
     this.createdTaskMap.set(id, task);
   };
-
-  // private getTask(name: string): Task {
-  //   if (!(name in this.tasks)) {
-  //     this.tasks[name] = {
-  //       name,
-  //       running: false,
-  //     };
-  //   }
-  //
-  //   return this.tasks[name];
-  // }
 }
 
 export function getTaskStatus(task: Task | undefined): string {

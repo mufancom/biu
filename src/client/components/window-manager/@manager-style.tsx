@@ -28,16 +28,19 @@ export const ManagerStyle = styled.div`
   .mosaic-split {
     position: absolute;
     z-index: 1;
+    transition: all 0.1s;
   }
   .mosaic-split:hover {
-    background: black;
+    transition: all 0.1s;
+
+    background: rgba(0, 0, 0, 0.2);
   }
   .mosaic-split .mosaic-split-line {
     position: absolute;
   }
   .mosaic-split.-row {
-    margin-left: -3px;
-    width: 6px;
+    margin-left: -2px;
+    width: 4px;
     cursor: ew-resize;
   }
   .mosaic-split.-row .mosaic-split-line {
@@ -47,8 +50,8 @@ export const ManagerStyle = styled.div`
     right: 3px;
   }
   .mosaic-split.-column {
-    margin-top: -3px;
-    height: 6px;
+    margin-top: -2px;
+    height: 4px;
     cursor: ns-resize;
   }
   .mosaic-split.-column .mosaic-split-line {
@@ -101,9 +104,11 @@ export const ManagerStyle = styled.div`
     bottom: 0;
     left: 0;
     background: rgba(0, 0, 0, 0.2);
-    border: 2px solid black;
+    border: 2px solid rgba(0, 0, 0, 0.5);
     opacity: 0;
+    transition: all 0.3s;
     z-index: 8;
+    border-radius: 4px;
   }
   .mosaic-drop-target .drop-target-container .drop-target.left {
     right: calc(100% - 30%);
@@ -174,7 +179,7 @@ export const ManagerStyle = styled.div`
     white-space: nowrap;
     overflow: hidden;
     min-height: 16px;
-    font-size: 14px;
+    font-size: 13px;
     color: ${props => props.theme.text.navPlaceholder};
   }
   .mosaic-window .mosaic-window-controls,
@@ -195,7 +200,6 @@ export const ManagerStyle = styled.div`
     background: white;
     z-index: 6;
     overflow: hidden;
-    background: ${props => props.theme.washedOutBlack};
   }
   .mosaic-window .mosaic-window-additional-actions-bar,
   .mosaic-preview .mosaic-window-additional-actions-bar {
@@ -246,7 +250,6 @@ export const ManagerStyle = styled.div`
     width: 100%;
     position: absolute;
     z-index: 0;
-    border: 1px solid ${props => props.theme.border.light};
     max-height: 400px;
   }
   .mosaic-window .mosaic-preview .mosaic-window-body,

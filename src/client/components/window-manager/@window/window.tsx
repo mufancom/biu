@@ -4,19 +4,53 @@ import {action} from 'mobx';
 import React, {Component, ReactNode} from 'react';
 import {ExpandButton, MosaicBranch, MosaicWindow} from 'react-mosaic-component';
 
-import {Task, TaskId, TaskService, getTaskStatus} from 'services/task-service';
+import {
+  Task,
+  TaskId,
+  TaskService,
+  TaskStatus,
+  getTaskStatus,
+} from 'services/task-service';
 import {styled} from 'theme';
 
 import {Block} from './@block';
-import {WindowRemoveButton} from './@window-buttons';
+import {
+  WindowRemoveButton,
+  WindowRestartButton,
+  WindowStatusDot,
+  WindowStopButton,
+} from './@window-tools';
+import {WindowStartButton} from './@window-tools/window-start-button';
 
 const Wrapper = styled.div`
   flex: 1;
   display: flex;
 `;
 
-const WindowWrapper = styled(MosaicWindow.ofType<TaskId>())`
+const MosaicWindowWithType = MosaicWindow.ofType<TaskId>();
+
+const WindowWrapper = styled(MosaicWindowWithType)`
   flex: 1;
+  box-sizing: border-box;
+
+  &.hover {
+    animation: pulse 0.75s;
+  }
+
+  ${WindowStatusDot.Wrapper} {
+    position: absolute;
+    top: 15px;
+    left: 5px;
+  }
+
+  ${Block.Wrapper} {
+    transition: opacity 0.3s;
+
+    &.stopped {
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+  }
 `;
 
 const WindowSubTitle = styled.div`
@@ -52,17 +86,47 @@ export class Window extends Component<WindowProps> {
 
     let task = this.taskService.createdTaskMap.get(id)!;
 
-    console.log(task);
+    let {name, output, status} = task;
 
-    let {name, output} = task;
+    let hover = id === this.taskService.currentHoverTaskId;
 
     return (
       <Wrapper className={classNames('window', className)}>
         <WindowWrapper
           path={path}
           title={name}
+          className={hover ? 'hover' : undefined}
           toolbarControls={
             <>
+              {status === TaskStatus.running ? (
+                <WindowRestartButton
+                  onClick={() => {
+                    this.onRestartButtonClick(task);
+                  }}
+                />
+              ) : (
+                undefined
+              )}
+              {status === TaskStatus.running ||
+              status === TaskStatus.restarting ? (
+                <WindowStopButton
+                  onClick={() => {
+                    this.onStopButtonClick(task);
+                  }}
+                />
+              ) : (
+                undefined
+              )}
+              {status === TaskStatus.stopped ||
+              status === TaskStatus.stopping ? (
+                <WindowStartButton
+                  onClick={() => {
+                    this.onStartButtonClick(task);
+                  }}
+                />
+              ) : (
+                undefined
+              )}
               <ExpandButton />
               <WindowRemoveButton
                 onClick={() => {
@@ -72,16 +136,31 @@ export class Window extends Component<WindowProps> {
             </>
           }
         >
+          <WindowStatusDot status={status} />
           <WindowSubTitle>{getTaskStatus(task)}</WindowSubTitle>
-          <Block html={output} />
+          <Block
+            html={output}
+            className={status === TaskStatus.stopped ? 'stopped' : undefined}
+          />
         </WindowWrapper>
       </Wrapper>
     );
   }
 
-  @action
   onRemoveButtonClick = (task: Task): void => {
     this.taskService.close(task);
+  };
+
+  onRestartButtonClick = (task: Task): void => {
+    this.taskService.restart(task);
+  };
+
+  onStopButtonClick = (task: Task): void => {
+    this.taskService.stop(task);
+  };
+
+  onStartButtonClick = (task: Task): void => {
+    this.taskService.start(task);
   };
 
   static Wrapper = Wrapper;

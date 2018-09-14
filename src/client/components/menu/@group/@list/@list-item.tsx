@@ -109,6 +109,7 @@ export class ListItem extends Component<ListItemProps> {
         )}
         onClick={this.onItemClick}
         onMouseEnter={this.onItemMouseEnter}
+        onMouseLeave={this.onMouseLeave}
       >
         <ItemTitleArea>
           <Title>{task.name}</Title>
@@ -153,12 +154,6 @@ export class ListItem extends Component<ListItemProps> {
         this.onStopButtonClick();
         break;
     }
-
-    this.taskService.currentHoverTaskId = undefined;
-
-    setTimeout(() => {
-      this.onItemMouseEnter();
-    }, 100);
   };
 
   @action
@@ -167,6 +162,15 @@ export class ListItem extends Component<ListItemProps> {
 
     if (id) {
       this.taskService.currentHoverTaskId = id;
+    }
+  };
+
+  @action
+  onMouseLeave = (): void => {
+    let {id} = this.props.task;
+
+    if (id && this.taskService.currentHoverTaskId === id) {
+      this.taskService.currentHoverTaskId = undefined;
     }
   };
 

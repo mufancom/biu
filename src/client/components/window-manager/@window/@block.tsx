@@ -1,6 +1,6 @@
 import {observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
-import React, {Component, ReactNode} from 'react';
+import React, {Component, ReactNode, createRef} from 'react';
 import Scrollbars from 'react-custom-scrollbars';
 
 import {styled} from 'theme';
@@ -34,8 +34,6 @@ const Wrapper = styled.div`
   }
 `;
 
-const ScrollbarsWrapper = styled(Scrollbars)``;
-
 const OutputWrapper = styled.div`
   padding: 7px;
   font-family: monospace;
@@ -49,12 +47,17 @@ export interface BlockProps {
 
 @observer
 export class Block extends Component<BlockProps> {
+  scrollbars: React.RefObject<Scrollbars> = createRef();
+
   render(): ReactNode {
     let {className, html} = this.props;
 
+    this.autoScroll();
+
     return (
       <Wrapper className={classNames('block', className)}>
-        <ScrollbarsWrapper
+        <Scrollbars
+          ref={this.scrollbars}
           autoHide
           autoHideTimeout={300}
           renderTrackVertical={(props, styles) => (
@@ -73,10 +76,32 @@ export class Block extends Component<BlockProps> {
           )}
         >
           <OutputWrapper dangerouslySetInnerHTML={{__html: html}} />
-        </ScrollbarsWrapper>
+        </Scrollbars>
       </Wrapper>
     );
   }
+
+  autoScroll = (): void => {
+    if (this.scrollbars.current) {
+      let scrollbars = this.scrollbars.current;
+
+      let height = scrollbars.getClientHeight();
+
+      let scrollTop = scrollbars.getScrollTop();
+
+      let scrollHeight = scrollbars.getScrollHeight();
+
+      let offset = scrollHeight - height - scrollTop;
+
+      if (offset < 5) {
+        console.log('scrolled');
+
+        setTimeout(() => {
+          scrollbars.scrollToBottom();
+        }, 100);
+      }
+    }
+  };
 
   static Wrapper = Wrapper;
 }

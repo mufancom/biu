@@ -77,7 +77,7 @@ export class Menu extends Component<MenuProps> {
           this.pinned ? 'pinned' : undefined,
           !this.pinned && this.hide ? 'hide' : undefined,
         )}
-        onMouseEnter={this.onMouseEnter}
+        onMouseOver={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
       >
         <TopTool>

@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   transition: all 0.3s;
   cursor: pointer;
+  background-color: ${props => props.theme.light};
 
   &:hover {
     box-shadow: 0 0 8px 0 rgba(232, 237, 250, 0.6),

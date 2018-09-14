@@ -63,7 +63,7 @@ export class Group extends Component<GroupProps> {
           onGroupNavLinkClick={this.onGroupNavLinkClick}
         />
         <ScrollbarsWrapper autoHide autoHideTimeout={300}>
-          <List tasks={nowGroupTasks} />
+          <List group={this.nowGroupName} tasks={nowGroupTasks} />
         </ScrollbarsWrapper>
       </Wrapper>
     );

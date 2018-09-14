@@ -58,6 +58,7 @@
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^15.3.0 || 16",
     "react-fa": "^5.0.0",
+    "react-flip-move": "^3.0.2",
     "react-mosaic": "^0.0.20",
     "react-mosaic-component": "^1.1.1",
     "react-scroll-horizontal": "^1.5.1",

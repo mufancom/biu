@@ -3,8 +3,9 @@
   "rules": {
     "no-implicit-dependencies": [
       true,
-      ["socket.io-client", "theme", "assets", "services"]
+      ["socket.io-client", "theme", "assets", "services", "utils"]
     ],
-    "explicit-return-type": [true, {"complexTypeFixer": true}]
+    "explicit-return-type": [true, {"complexTypeFixer": true}],
+    "no-null-keyword": false
   }
 }

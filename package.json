@@ -7,7 +7,7 @@
   },
   "scripts": {
     "lint-cli": "tslint -c src/cli/tslint.json -p src/cli/tsconfig.json",
-    "lint-client": "tslint -c src/client/tslint.json -p src/cli/tsconfig.json",
+    "lint-client": "tslint -c src/client/tslint.json -p src/client/tsconfig.json",
     "lint": "yarn lint-cli && yarn lint-client",
     "build-cli": "yarn lint-cli && rimraf bld/cli && tsc -p src/cli/tsconfig.json",
     "build-client": "yarn lint-client && rimraf bld/client && parcel build src/client/index.html --out-dir bld/client",

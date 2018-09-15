@@ -1,6 +1,5 @@
 import {inject, observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
-import {action} from 'mobx';
 import React, {Component, ReactNode} from 'react';
 import {ExpandButton, MosaicBranch, MosaicWindow} from 'react-mosaic-component';
 

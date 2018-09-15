@@ -2,7 +2,6 @@ import {inject, observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
 import {action} from 'mobx';
 import React, {Component, ReactNode} from 'react';
-import Icon from 'react-fa';
 import {Mosaic, MosaicNode} from 'react-mosaic-component';
 
 import {TaskId, TaskService} from 'services/task-service';
@@ -17,10 +16,12 @@ const WindowManager = Mosaic.ofType<TaskId>();
 const Wrapper = styled(ManagerStyle)`
   padding: 30px 40px 20px 40px;
   transition: all 0.5s;
+  transform: translate3d(0, 0, 0);
 
   &.single-windowed {
     padding-top: 20px;
     transition: all 0.5s;
+    transform: translate3d(0, 0, 0);
   }
 `;
 
@@ -110,6 +111,7 @@ export class Manager extends Component<ManagerProps> {
           }}
           onChange={this.onWindowChange}
           value={this.taskService.currentNode}
+          zeroStateView={<div>No windows!</div>}
         />
       </Wrapper>
     );

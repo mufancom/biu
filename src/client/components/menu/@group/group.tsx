@@ -99,7 +99,7 @@ export class Group extends Component<GroupProps> {
 
   @action
   onGroupNavLinkClick = (name: string): void => {
-    if (this.nowGroupName == name) {
+    if (this.nowGroupName === name) {
       this.nowGroupName = undefined;
     } else {
       this.nowGroupName = name;

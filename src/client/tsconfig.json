@@ -5,6 +5,7 @@
     "jsx": "react",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
 
     "baseUrl": ".",
     "rootDir": ".",

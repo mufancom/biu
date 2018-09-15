@@ -94,8 +94,6 @@ export class Block extends Component<BlockProps> {
       let offset = scrollHeight - height - scrollTop;
 
       if (offset < 5) {
-        console.log('scrolled');
-
         setTimeout(() => {
           scrollbars.scrollToBottom();
         }, 100);

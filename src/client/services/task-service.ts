@@ -234,7 +234,7 @@ export class TaskService {
   }
 
   @action
-  private addToBottomRight = (taskId: TaskId) => {
+  private addToBottomRight = (taskId: TaskId): void => {
     let currentNode = this.currentNode;
 
     if (currentNode) {

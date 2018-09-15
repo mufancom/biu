@@ -59,6 +59,7 @@ export class ListItemButton extends Component<ListItemButtonProps> {
 
   onInnerClick = (event: React.MouseEvent): void => {
     event.preventDefault();
+    event.stopPropagation();
 
     let {onClick} = this.props;
 

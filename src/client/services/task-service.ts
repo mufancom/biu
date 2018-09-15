@@ -345,6 +345,8 @@ export class TaskService {
   private onCreate = (task: CreatedTask): void => {
     let {id, name} = task;
 
+    console.log('created', task);
+
     task.running = true;
     task.status = TaskStatus.running;
 

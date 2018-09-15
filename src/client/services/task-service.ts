@@ -82,6 +82,9 @@ export interface StdErrData {
 
 export class TaskService {
   @observable
+  connected = false;
+
+  @observable
   taskGroups: TaskGroupDict = {};
 
   @observable
@@ -98,6 +101,7 @@ export class TaskService {
 
   constructor(private socketIOService: SocketIOService) {
     this.socketIOService.on('connect', this.onConnect);
+    this.socketIOService.on('disconnect', this.onDisconnect);
     this.socketIOService.on('initialize', this.onInitialize);
     this.socketIOService.on('create', this.onCreate);
     this.socketIOService.on('close', this.onClose);
@@ -289,8 +293,12 @@ export class TaskService {
 
   @action
   private onConnect = (): void => {
-    // tslint:disable-next-line
-    console.log('connected');
+    this.connected = true;
+  };
+
+  @action
+  private onDisconnect = (): void => {
+    this.connected = false;
   };
 
   @action

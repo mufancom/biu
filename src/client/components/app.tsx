@@ -1,9 +1,11 @@
-import {observer} from '@makeflow/mobx-utils';
+import {inject, observer} from '@makeflow/mobx-utils';
 import classNames from 'classnames';
 import React, {Component, ReactNode} from 'react';
 
+import {TaskService} from 'services/task-service';
 import {styled} from 'theme';
 
+import {DisconnectedView} from './disconnected/disconnected-view';
 import {Menu} from './menu';
 import {Manager} from './window-manager';
 
@@ -30,11 +32,17 @@ export interface AppProps {
 
 @observer
 export class App extends Component<AppProps> {
+  @inject
+  taskService!: TaskService;
+
   render(): ReactNode {
     let {className} = this.props;
 
+    let connect = this.taskService.connected;
+
     return (
       <Wrapper className={classNames('app', className)}>
+        <DisconnectedView connect={connect} />
         <Menu />
         <Manager />
       </Wrapper>

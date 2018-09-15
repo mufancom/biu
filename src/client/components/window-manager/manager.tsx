@@ -33,6 +33,9 @@ const ToolBar = styled.div`
   top: 15px;
   transition: all 0.5s;
   opacity: 0.5;
+  left: 50px;
+  display: flex;
+  justify-content: flex-end;
 
   &.hidden {
     opacity: 0;

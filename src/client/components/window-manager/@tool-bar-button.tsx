@@ -11,6 +11,9 @@ const Wrapper = styled.a`
   padding: 3px 5px;
   border-radius: 3px;
   margin-left: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.2);

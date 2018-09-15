@@ -12,6 +12,8 @@ html {
 
 a {
   transition: all 0.3s;
+  cursor: pointer;
+  user-select: none;
 }
 
 ::-webkit-scrollbar {

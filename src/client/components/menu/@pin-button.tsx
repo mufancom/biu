@@ -10,7 +10,6 @@ const Wrapper = styled.a`
   color: ${props => props.theme.bar.gray};
   opacity: 0.7;
   padding: 5px;
-  cursor: pointer;
 
   &:hover {
     opacity: 1;

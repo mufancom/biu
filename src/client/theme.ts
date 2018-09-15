@@ -52,6 +52,7 @@ export const theme = {
   gray: grayLightnessModifier,
   light: light.hex(),
   washedOutBlack: '#31363D',
+  background: '#eff3f5',
   text: {
     navPrimary: '#333',
     navRegular: '#444',

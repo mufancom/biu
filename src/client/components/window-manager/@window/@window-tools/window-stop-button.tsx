@@ -8,7 +8,6 @@ import {styled} from 'theme';
 const Wrapper = styled.a`
   color: ${props => props.theme.bar.gray};
   transition: all 0.3s;
-  cursor: pointer;
   font-size: 10px;
   padding: 2px;
   margin-top: 9px;

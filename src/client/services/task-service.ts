@@ -128,6 +128,12 @@ export class TaskService {
     }
   }
 
+  startAll(): void {
+    for (let task of this.createdTaskMap.values()) {
+      this.start(task);
+    }
+  }
+
   @action
   restart(task: Task): void {
     if (!this.isCreated(task)) {
@@ -141,9 +147,19 @@ export class TaskService {
     this.socketIOService.emit('restart', {id});
   }
 
+  restartAll(): void {
+    for (let task of this.createdTaskMap.values()) {
+      this.restart(task);
+    }
+  }
+
   @action
   stop(task: Task): void {
-    if (!this.isCreated(task)) {
+    if (
+      !this.isCreated(task) ||
+      (task.status !== TaskStatus.running &&
+        task.status !== TaskStatus.restarting)
+    ) {
       return;
     }
 
@@ -152,6 +168,12 @@ export class TaskService {
     task.status = TaskStatus.stopping;
 
     this.socketIOService.emit('stop', {id});
+  }
+
+  stopAll(): void {
+    for (let task of this.createdTaskMap.values()) {
+      this.stop(task);
+    }
   }
 
   @action
@@ -167,6 +189,19 @@ export class TaskService {
     }
 
     this.socketIOService.emit('close', {id});
+  }
+
+  closeAll(): void {
+    for (let task of this.createdTaskMap.values()) {
+      this.close(task);
+    }
+  }
+
+  @action
+  autoArrangeWindows(): void {
+    let leaves = getLeaves(this.currentNode);
+
+    this.currentNode = createBalancedTreeFromLeaves(leaves);
   }
 
   private getCreatedTaskByTaskId(id: TaskId): CreatedTask | undefined {

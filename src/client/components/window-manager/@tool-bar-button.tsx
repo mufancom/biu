@@ -6,18 +6,18 @@ import Icon from 'react-fa';
 import {styled} from 'theme';
 
 const Wrapper = styled.a`
-  background-color: rgb(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
   color: ${props => props.theme.background};
   padding: 3px 5px;
   border-radius: 3px;
   margin-left: 5px;
 
   &:hover {
-    background-color: rgb(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.2);
   }
 
   &:active {
-    background-color: rgb(0, 0, 0, 0.3);
+    background-color: rgba(0, 0, 0, 0.3);
   }
 
   &.green {

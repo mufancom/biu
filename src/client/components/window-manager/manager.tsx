@@ -10,6 +10,7 @@ import {styled} from 'theme';
 import {ManagerStyle} from './@manager-style';
 import {ToolBarButton} from './@tool-bar-button';
 import {Window} from './@window';
+import {ZeroState} from './@zero-state';
 
 const WindowManager = Mosaic.ofType<TaskId>();
 
@@ -111,7 +112,7 @@ export class Manager extends Component<ManagerProps> {
           }}
           onChange={this.onWindowChange}
           value={this.taskService.currentNode}
-          zeroStateView={<div>No windows!</div>}
+          zeroStateView={<ZeroState />}
         />
       </Wrapper>
     );

@@ -345,8 +345,6 @@ export class TaskService {
   private onCreate = (task: CreatedTask): void => {
     let {id, name} = task;
 
-    console.log('created', task);
-
     task.running = true;
     task.status = TaskStatus.running;
 
@@ -367,6 +365,7 @@ export class TaskService {
       return;
     }
 
+    task.running = false;
     task.status = TaskStatus.ready;
 
     this.createdTaskMap.delete(id);
@@ -422,7 +421,16 @@ export class TaskService {
       return;
     }
 
-    // TODO: add status tip to the block
+    task.running = false;
+    task.status = TaskStatus.restarting;
+
+    task.output = appendOutput(
+      task.output,
+      outputInfo('[biu] Restarting on change...'),
+      'system',
+    );
+
+    this.createdTaskMap.set(id, task);
   };
 
   @action

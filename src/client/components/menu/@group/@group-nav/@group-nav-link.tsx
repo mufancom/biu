@@ -10,6 +10,7 @@ const Wrapper = styled.a`
   font-size: 12px;
   cursor: pointer;
   user-select: none;
+  animation: fadeIn 0.5s;
 
   &:hover {
     color: ${props => props.theme.text.navPlaceholder};

@@ -18,6 +18,8 @@ const Wrapper = styled.div`
   }
 `;
 
+const ListItemWrapper = styled.div``;
+
 export interface ListProps {
   className?: string;
   group: string | undefined;
@@ -38,7 +40,9 @@ export class List extends Component<ListProps> {
           staggerDurationBy={60}
         >
           {tasks.map(task => (
-            <ListItem key={group + task.name} task={task} />
+            <ListItemWrapper key={group + task.name}>
+              <ListItem task={task} />
+            </ListItemWrapper>
           ))}
         </FlipMove>
       </Wrapper>

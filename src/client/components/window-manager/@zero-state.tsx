@@ -14,7 +14,7 @@ const Wrapper = styled.div`
 `;
 
 const ZeroStateBox = styled.div`
-  padding-bottom: 20px;
+  padding-bottom: 30px;
   text-align: center;
   animation: fadeUpIn 0.5s;
 `;

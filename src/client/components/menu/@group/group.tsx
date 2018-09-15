@@ -74,13 +74,9 @@ export class Group extends Component<GroupProps> {
 
     let tasks: Task[] = [];
 
-    if (keys.length) {
-      let nowGroupName = this.nowGroupName;
+    let nowGroupName = this.nowGroupName;
 
-      if (!nowGroupName) {
-        nowGroupName = keys[0];
-      }
-
+    if (keys.length && nowGroupName) {
       let nowGroupTaskNames = groupDict[nowGroupName];
 
       for (let [key, task] of entries(taskDict)) {

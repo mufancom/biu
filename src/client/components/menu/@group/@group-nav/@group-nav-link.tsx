@@ -74,7 +74,7 @@ const createGroupMenu = (
   onRestartGroupClick?: OnClickFunc,
   onStopGroupClick?: OnClickFunc,
   onCloseGroupClick?: OnClickFunc,
-) => (
+): ReactNode => (
   <GroupMenuLayer>
     <GroupMenuButton onClick={onStartGroupClick}>
       <Icon

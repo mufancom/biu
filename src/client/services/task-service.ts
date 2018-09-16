@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {action, observable, values} from 'mobx';
+import {action, observable} from 'mobx';
 import {
   Corner,
   MosaicBranch,

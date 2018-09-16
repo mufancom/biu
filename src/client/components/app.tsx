@@ -5,7 +5,7 @@ import React, {Component, ReactNode} from 'react';
 import {TaskService} from 'services/task-service';
 import {styled} from 'theme';
 
-import {DisconnectedView} from './disconnected/disconnected-view';
+import {DisconnectedView} from './disconnected';
 import {Menu} from './menu';
 import {Manager} from './window-manager';
 

@@ -61,6 +61,10 @@ export class Group extends Component<GroupProps> {
           groupNames={keys}
           nowGroupName={this.nowGroupName}
           onGroupNavLinkClick={this.onGroupNavLinkClick}
+          onGroupNavStartGroupClick={this.onGroupNavStartGroupClick}
+          onGroupNavRestartGroupClick={this.onGroupNavRestartGroupClick}
+          onGroupNavStopGroupClick={this.onGroupNavStopGroupClick}
+          onGroupNavCloseGroupClick={this.onGroupNavCloseGroupClick}
         />
         <ScrollbarsWrapper autoHide autoHideTimeout={300}>
           <List group={this.nowGroupName} tasks={nowGroupTasks} />
@@ -100,6 +104,22 @@ export class Group extends Component<GroupProps> {
     } else {
       this.nowGroupName = name;
     }
+  };
+
+  onGroupNavStartGroupClick = (name: string): void => {
+    this.taskService.startGroup(name);
+  };
+
+  onGroupNavRestartGroupClick = (name: string): void => {
+    this.taskService.restartGroup(name);
+  };
+
+  onGroupNavStopGroupClick = (name: string): void => {
+    this.taskService.stopGroup(name);
+  };
+
+  onGroupNavCloseGroupClick = (name: string): void => {
+    this.taskService.closeGroup(name);
   };
 
   static Wrapper = Wrapper;

@@ -54,6 +54,7 @@
     "npm-which": "^3.0.1",
     "open": "0.0.5",
     "prettier": "^1.14.2",
+    "rc-dropdown": "^2.2.0",
     "react": "^15.3.0 || 16",
     "react-custom-scrollbars": "^4.2.1",
     "react-dom": "^15.3.0 || 16",

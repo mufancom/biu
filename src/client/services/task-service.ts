@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {action, observable} from 'mobx';
+import {action, observable, values} from 'mobx';
 import {
   Corner,
   MosaicBranch,
@@ -132,6 +132,14 @@ export class TaskService {
     }
   }
 
+  startGroup(groupName: string): void {
+    let tasks = this.filterTasksInGroup(Object.values(this.tasks), groupName);
+
+    for (let task of tasks) {
+      this.start(task);
+    }
+  }
+
   startAll(): void {
     for (let task of this.createdTaskMap.values()) {
       this.start(task);
@@ -149,6 +157,17 @@ export class TaskService {
     task.status = TaskStatus.restarting;
 
     this.socketIOService.emit('restart', {id});
+  }
+
+  restartGroup(groupName: string): void {
+    let tasks = this.filterTasksInGroup(
+      Array.from(this.createdTaskMap.values()),
+      groupName,
+    );
+
+    for (let task of tasks) {
+      this.restart(task);
+    }
   }
 
   restartAll(): void {
@@ -174,6 +193,17 @@ export class TaskService {
     this.socketIOService.emit('stop', {id});
   }
 
+  stopGroup(groupName: string): void {
+    let tasks = this.filterTasksInGroup(
+      Array.from(this.createdTaskMap.values()),
+      groupName,
+    );
+
+    for (let task of tasks) {
+      this.stop(task);
+    }
+  }
+
   stopAll(): void {
     for (let task of this.createdTaskMap.values()) {
       this.stop(task);
@@ -195,6 +225,17 @@ export class TaskService {
     this.socketIOService.emit('close', {id});
   }
 
+  closeGroup(groupName: string): void {
+    let tasks = this.filterTasksInGroup(
+      Array.from(this.createdTaskMap.values()),
+      groupName,
+    );
+
+    for (let task of tasks) {
+      this.close(task);
+    }
+  }
+
   closeAll(): void {
     for (let task of this.createdTaskMap.values()) {
       this.close(task);
@@ -206,6 +247,26 @@ export class TaskService {
     let leaves = getLeaves(this.currentNode);
 
     this.currentNode = createBalancedTreeFromLeaves(leaves);
+  }
+
+  private filterTasksInGroup(tasks: Task[], groupName: string): Task[] {
+    let result: Task[] = [];
+
+    if (!(groupName in this.taskGroups)) {
+      return result;
+    }
+
+    let taskNamesInGroup = this.taskGroups[groupName];
+
+    for (let task of tasks) {
+      let {name} = task;
+
+      if (taskNamesInGroup.includes(name)) {
+        result.push(task);
+      }
+    }
+
+    return result;
   }
 
   private getCreatedTaskByTaskId(id: TaskId): CreatedTask | undefined {
@@ -220,7 +281,6 @@ export class TaskService {
     return this.tasks[name] as CreatedTask;
   }
 
-  @action
   private freshCurrentNode(): void {
     let createdTaskIds = Array.from(this.createdTaskMap.keys());
     let currentNodeIds = getLeaves(this.currentNode);

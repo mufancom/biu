@@ -8,7 +8,7 @@ import {styled} from 'theme';
 import {GroupNavLink} from './@group-nav-link';
 
 const Wrapper = styled.div`
-  height: 17px;
+  height: 20px;
 
   &.hidden {
     display: none;
@@ -26,12 +26,25 @@ export interface GroupNavProps {
   groupNames: string[];
   nowGroupName: string | undefined;
   onGroupNavLinkClick?(name: string): void;
+  onGroupNavStartGroupClick?(name: string): void;
+  onGroupNavRestartGroupClick?(name: string): void;
+  onGroupNavStopGroupClick?(name: string): void;
+  onGroupNavCloseGroupClick?(name: string): void;
 }
 
 @observer
 export class GroupNav extends Component<GroupNavProps> {
   render(): ReactNode {
-    let {className, groupNames, nowGroupName, onGroupNavLinkClick} = this.props;
+    let {
+      className,
+      groupNames,
+      nowGroupName,
+      onGroupNavLinkClick,
+      onGroupNavStartGroupClick,
+      onGroupNavRestartGroupClick,
+      onGroupNavStopGroupClick,
+      onGroupNavCloseGroupClick,
+    } = this.props;
 
     return (
       <Wrapper
@@ -51,6 +64,10 @@ export class GroupNav extends Component<GroupNavProps> {
               name={name}
               active={nowGroupName === name}
               onClick={onGroupNavLinkClick}
+              onStartGroupClick={onGroupNavStartGroupClick}
+              onRestartGroupClick={onGroupNavRestartGroupClick}
+              onStopGroupClick={onGroupNavStopGroupClick}
+              onCloseGroupClick={onGroupNavCloseGroupClick}
             />
           ))}
         </ScrollHorizontal>

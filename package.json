@@ -38,7 +38,6 @@
     "bld/client/**"
   ],
   "dependencies": {
-    "@blueprintjs/core": "^3.5.1",
     "@makeflow/mobx-utils": "^0.1.0",
     "ansi-to-html": "^0.6.6",
     "chalk": "^2.4.1",

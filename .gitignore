@@ -6,7 +6,6 @@
 
 *.log
 *.tgz
-yarn-error.log
 
 .cache
 

@@ -265,6 +265,7 @@ export class Server extends EventEmitter {
     }
 
     for (let [index, line] of lines.entries()) {
+      // Problem: `c` and `G` dramatically come from this line
       let lineHtml = taskInfo.converter.toHtml(line);
 
       if (index === lines.length - 1 && !dataCompleted) {

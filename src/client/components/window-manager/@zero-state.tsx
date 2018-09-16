@@ -50,7 +50,7 @@ export class ZeroState extends Component<ZeroStateProps> {
           <ZeroStateImg src={ZeroStateImage} />
           <ZeroStateTitle>No Tasks</ZeroStateTitle>
           <ZeroStateSubtitle>
-            Click on items on the left to start running a few tasks!
+            Click on items on the left to run a few tasks!
           </ZeroStateSubtitle>
         </ZeroStateBox>
       </Wrapper>

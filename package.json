@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/makeflow/syncable.git"
+    "url": "git+https://github.com/makeflow/biu.git"
   },
   "keywords": [
     "command-line",
@@ -30,9 +30,9 @@
   "author": "vilicvane",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/makeflow/syncable/issues"
+    "url": "https://github.com/makeflow/biu/issues"
   },
-  "homepage": "https://github.com/makeflow/syncable#readme",
+  "homepage": "https://github.com/makeflow/biu#readme",
   "files": [
     "bld/cli/**/*.js",
     "bld/client/**"

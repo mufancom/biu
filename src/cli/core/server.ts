@@ -173,7 +173,9 @@ export class Server extends EventEmitter {
   }
 
   private setup(): void {
-    this.app.use(express.static(Path.join(__dirname, '../../static')));
+    let clientBuildPath = Path.join(__dirname, '../../client');
+
+    this.app.use(express.static(clientBuildPath));
     this.io.on('connection', socket => this.initializeConnection(socket));
   }
 
@@ -263,14 +265,13 @@ export class Server extends EventEmitter {
     }
 
     for (let [index, line] of lines.entries()) {
+      // Problem: `c` and `G` dramatically come from this line
+      let lineHtml = taskInfo.converter.toHtml(line);
+
       if (index === lines.length - 1 && !dataCompleted) {
-        html += `<div data-type='${event}' data-uncompleted="true">${taskInfo.converter.toHtml(
-          line,
-        )}</div>`;
+        html += `<div data-type='${event}' data-uncompleted="true">${lineHtml}</div>`;
       } else {
-        html += `<div data-type='${event}'>${taskInfo.converter.toHtml(
-          line,
-        )}</div>`;
+        html += `<div data-type='${event}'>${lineHtml}</div>`;
       }
     }
 

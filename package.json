@@ -3,15 +3,21 @@
   "version": "0.2.18",
   "description": "The command-line task hub.",
   "bin": {
-    "biu": "bld/cli.js"
+    "biu": "bld/cli/main.js"
   },
   "scripts": {
-    "lint": "tslint -c tslint.json -p tsconfig.json",
-    "build": "yarn lint && rimraf bld && tsc"
+    "lint-cli": "tslint -c src/cli/tslint.json -p src/cli/tsconfig.json",
+    "lint-client": "tslint -c src/client/tslint.json -p src/client/tsconfig.json",
+    "lint": "yarn lint-cli && yarn lint-client",
+    "build-cli": "yarn lint-cli && rimraf bld/cli && tsc -p src/cli/tsconfig.json",
+    "build-client": "yarn lint-client && rimraf bld/client && parcel build src/client/index.html --out-dir bld/client",
+    "build": "yarn build-cli && yarn build-client",
+    "start-cli": "node bld/cli/main.js",
+    "start-client": "parcel serve src/client/index.html --port 8089 --out-dir bld/client"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vilic/biu.git"
+    "url": "git+https://github.com/makeflow/biu.git"
   },
   "keywords": [
     "command-line",
@@ -23,26 +29,43 @@
   "author": "vilicvane",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vilic/biu/issues"
+    "url": "https://github.com/makeflow/biu/issues"
   },
-  "homepage": "https://github.com/vilic/biu#readme",
+  "homepage": "https://github.com/makeflow/biu#readme",
   "files": [
-    "bld/**/*.js",
-    "static/**"
+    "bld/cli/**/*.js",
+    "bld/client/**"
   ],
   "dependencies": {
+    "@makeflow/mobx-utils": "^0.1.0",
     "ansi-to-html": "^0.6.6",
     "chalk": "^2.4.1",
     "chokidar": "^2.0.4",
+    "classnames": "^2.2.6",
     "clime": "^0.5.9",
+    "color": "^3.0.0",
+    "components": "^0.1.0",
     "express": "^4.16.3",
+    "lodash": "^4.17.11",
+    "mobx": "^5.1.0",
+    "mobx-react": "^5.2.8",
     "npm-which": "^3.0.1",
     "open": "0.0.5",
     "prettier": "^1.14.2",
+    "rc-dropdown": "^2.2.0",
+    "react": "^15.3.0 || 16",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-dom": "^15.3.0 || 16",
+    "react-fa": "^5.0.0",
+    "react-flip-move": "^3.0.2",
+    "react-mosaic": "^0.0.20",
+    "react-mosaic-component": "^1.1.1",
+    "react-scroll-horizontal": "^1.5.1",
     "shell-escape": "^0.2.0",
     "socket.io": "^2.1.1",
     "source-map-support": "^0.5.6",
     "strip-color": "^0.1.0",
+    "styled-components": "^3.4.6",
     "tslib": "^1.9.3",
     "villa": "^0.3.1"
   },
@@ -50,10 +73,23 @@
     "@magicspace/configs": "^0.1.29",
     "@types/chalk": "^2.2.0",
     "@types/chokidar": "^1.7.5",
+    "@types/classnames": "^2.2.6",
+    "@types/color": "^3.0.0",
     "@types/express": "^4.16.0",
+    "@types/lodash": "^4.14.116",
     "@types/node": "^10.5.7",
+    "@types/react": "^16.4.14",
+    "@types/react-custom-scrollbars": "^4.0.5",
+    "@types/react-dom": "^16.0.7",
+    "@types/react-fa": "^4.1.5",
     "@types/socket.io": "^1.4.36",
+    "@types/socket.io-client": "^1.4.32",
+    "babel-preset-react": "^6.24.1",
+    "dot-template-types": "^0.0.7",
+    "parcel-bundler": "^1.9.7",
+    "parcel-plugin-typescript": "^1.0.0",
     "rimraf": "^2.6.2",
+    "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "tslint-language-service": "^0.9.9",
     "typescript": "^3.0.1"

@@ -1,0 +1,11 @@
+{
+  "extends": "../../node_modules/@magicspace/configs/tsconfig.json",
+  "compilerOptions": {
+    "target": "es2017",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    "rootDir": ".",
+    "outDir": "../../bld/cli"
+  }
+}

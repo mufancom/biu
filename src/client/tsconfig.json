@@ -1,0 +1,14 @@
+{
+  "extends": "../../node_modules/@magicspace/configs/tsconfig-browser.json",
+  "compilerOptions": {
+    "target": "es6",
+    "jsx": "react",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "../../bld/client"
+  }
+}

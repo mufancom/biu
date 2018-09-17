@@ -1,12 +1,25 @@
+# Installable packages
+
+node_modules/
+
+# Configuration
+
 /.vscode/launch.json
 /.idea/
+.config/
+/nodemon.json
+/.biu.json
 
-/node_modules/
-/bld/
+# Building artifacts
 
-*.log
+.cache/
+bld/
 *.tgz
 
-.cache
+# Debugging outputs
 
-/.biu.json
+*.log
+
+# Testing files
+
+/test.*

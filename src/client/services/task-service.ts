@@ -587,7 +587,7 @@ export function getTaskStatus(task: Task | undefined): string {
     case TaskStatus.running:
       return line ? line : 'running';
     case TaskStatus.stopped:
-      return 'stopped';
+      return 'stopped asidhasdhai haihduahdiauhduiahdiuashdiauhdaiuhdiuhhiuhdiashdiau';
     case TaskStatus.stopping:
       return 'stopping';
     case TaskStatus.restarting:

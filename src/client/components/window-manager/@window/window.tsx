@@ -56,8 +56,8 @@ const WindowSubTitle = styled.div`
   position: absolute;
   font-size: 12px;
   top: 10px;
-  left: 50px;
-  right: 50px;
+  left: 85px;
+  right: 85px;
   height: 18px;
   white-space: nowrap;
   overflow: hidden;

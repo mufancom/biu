@@ -78,6 +78,10 @@ const Title = styled.div`
 const SubTitle = styled.div`
   color: ${props => props.theme.text.secondary};
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 `;
 
 const ItemOperationArea = styled.div`

@@ -15,10 +15,13 @@ import {
   updateTree,
 } from 'react-mosaic-component';
 
+import {deepCopy} from 'utils/lang';
 import {appendOutput, outputError, outputInfo} from 'utils/output';
+import {getStorageObject, setStorageObject} from 'utils/storage';
 
 import {SocketIOService} from './socket-io-service';
 
+export type TaskName = string;
 export type TaskId = string;
 
 export enum TaskStatus {
@@ -98,6 +101,8 @@ export class TaskService {
 
   @observable
   currentHoverTaskId: TaskId | undefined;
+
+  lastTaskList: TaskName[] = [];
 
   constructor(private socketIOService: SocketIOService) {
     this.socketIOService.on('connect', this.onConnect);
@@ -247,6 +252,81 @@ export class TaskService {
     let leaves = getLeaves(this.currentNode);
 
     this.currentNode = createBalancedTreeFromLeaves(leaves);
+  }
+
+  restoreNode(node: MosaicNode<TaskId> | null): MosaicNode<TaskId> | null {
+    if (node) {
+      let {
+        taskList,
+        taskNameToIdMap,
+      } = this.getTaskListAndTaskNameAndIdMapOutOfNode(node);
+
+      try {
+        let storedNode = getLayoutFromStorage(taskList, taskNameToIdMap);
+
+        if (storedNode) {
+          return storedNode;
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    return node;
+  }
+
+  saveNodeLayout(node: MosaicNode<TaskId> | null): void {
+    if (node) {
+      let {
+        taskList,
+        taskIdToNameMap,
+      } = this.getTaskListAndTaskNameAndIdMapOutOfNode(node);
+
+      if (
+        !this.lastTaskList ||
+        getLayoutStorageKey(taskList) !== getLayoutStorageKey(this.lastTaskList)
+      ) {
+        this.lastTaskList = taskList;
+
+        return;
+      } else {
+        this.lastTaskList = taskList;
+
+        try {
+          setLayoutToStorage(taskList, node, taskIdToNameMap);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+  }
+
+  private getTaskListAndTaskNameAndIdMapOutOfNode(
+    node: MosaicNode<TaskId>,
+  ): {
+    taskList: string[];
+    taskNameToIdMap: Map<TaskName, TaskId>;
+    taskIdToNameMap: Map<TaskId, TaskName>;
+  } {
+    let taskList: string[] = [];
+    let taskNameToIdMap = new Map<TaskName, TaskId>();
+    let taskIdToNameMap = new Map<TaskId, TaskName>();
+
+    let leaves = getLeaves(node);
+
+    for (let leave of leaves) {
+      let task = this.createdTaskMap.get(leave);
+
+      if (task) {
+        taskList.push(task.name);
+        taskNameToIdMap.set(task.name, leave);
+        taskIdToNameMap.set(leave, task.name);
+      }
+    }
+
+    taskList = taskList.sort();
+
+    return {taskList, taskNameToIdMap, taskIdToNameMap};
   }
 
   private filterTasksInGroup(tasks: Task[], groupName: string): Task[] {
@@ -587,11 +667,87 @@ export function getTaskStatus(task: Task | undefined): string {
     case TaskStatus.running:
       return line ? line : 'running';
     case TaskStatus.stopped:
-      return 'stopped asidhasdhai haihduahdiauhduiahdiuashdiauhdaiuhdiuhhiuhdiashdiau';
+      return 'stopped';
     case TaskStatus.stopping:
       return 'stopping';
     case TaskStatus.restarting:
       return 'restarting';
+  }
+}
+
+export function getLayoutStorageKey(taskList: TaskName[]): string {
+  return `layout-${taskList.sort().join('|')}`;
+}
+
+export function getLayoutFromStorage(
+  taskList: TaskName[],
+  taskNameToIdMap: Map<TaskName, TaskId>,
+): MosaicNode<TaskId> | undefined {
+  if (taskList.length > 1) {
+    let key = getLayoutStorageKey(taskList);
+
+    let innerMosaicNode = getStorageObject<MosaicNode<TaskName>>(key);
+
+    if (innerMosaicNode) {
+      let newMosaicNode = convertMosaicNode<TaskName, TaskId>(
+        innerMosaicNode,
+        taskNameToIdMap,
+      );
+
+      return newMosaicNode;
+    }
+  }
+
+  return undefined;
+}
+
+export function setLayoutToStorage(
+  taskList: TaskName[],
+  node: MosaicNode<TaskId>,
+  taskIdToNameMap: Map<TaskId, TaskName>,
+): void {
+  if (taskList.length > 1) {
+    let key = getLayoutStorageKey(taskList);
+
+    let nodeCopy = deepCopy(node);
+
+    let mosaicNode = convertMosaicNode<TaskId, TaskName>(
+      nodeCopy,
+      taskIdToNameMap,
+    );
+
+    if (mosaicNode) {
+      setStorageObject(key, mosaicNode);
+    }
+  }
+}
+
+export function convertMosaicNode<
+  FromIdType extends string,
+  ToIdType extends string
+>(
+  fromNode: MosaicNode<FromIdType>,
+  idMap: Map<FromIdType, ToIdType>,
+): MosaicNode<ToIdType> {
+  if (typeof fromNode === 'string') {
+    let toId = idMap.get(fromNode);
+
+    if (!toId) {
+      throw new Error(`fromId: '${fromNode}' fromId not found in \`idMap\``);
+    }
+
+    return toId;
+  } else {
+    fromNode.first = convertMosaicNode<FromIdType, ToIdType>(
+      fromNode.first,
+      idMap,
+    ) as any;
+    fromNode.second = convertMosaicNode<FromIdType, ToIdType>(
+      fromNode.second,
+      idMap,
+    ) as any;
+
+    return fromNode as any;
   }
 }
 

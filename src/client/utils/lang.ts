@@ -24,3 +24,7 @@ export function mapObject<T extends object>(
 
   return nodes;
 }
+
+export function deepCopy<T>(object: T): T {
+  return JSON.parse(JSON.stringify(object));
+}

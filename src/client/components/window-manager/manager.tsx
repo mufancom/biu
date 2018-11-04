@@ -107,6 +107,11 @@ export class Manager extends Component<ManagerProps> {
             title="Auto arrange"
             onClick={this.onAutoArrangeClick}
           />
+          <ToolBarButton
+            icon="columns"
+            title="Restore layout"
+            onClick={this.onRestoreLayoutClick}
+          />
         </ToolBar>
         <WindowManager
           key={this.windowKey}
@@ -123,7 +128,11 @@ export class Manager extends Component<ManagerProps> {
 
   @action
   onWindowChange = (newNode: MosaicNode<TaskId> | null): void => {
-    this.taskService.currentNode = newNode;
+    let taskService = this.taskService;
+
+    taskService.saveNodeLayout(newNode);
+
+    taskService.currentNode = newNode;
   };
 
   onStartAllClick = (): void => {
@@ -144,6 +153,13 @@ export class Manager extends Component<ManagerProps> {
 
   onAutoArrangeClick = (): void => {
     this.taskService.autoArrangeWindows();
+  };
+
+  @action
+  onRestoreLayoutClick = (): void => {
+    let taskService = this.taskService;
+
+    taskService.currentNode = taskService.restoreNode(taskService.currentNode);
   };
 
   static Wrapper = Wrapper;

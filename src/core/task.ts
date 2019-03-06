@@ -20,6 +20,7 @@ export interface TaskProblemsUpdateEventData {
 
 export interface TaskOptions {
   cwd: string;
+  env: Dictionary<string> | undefined;
   stdout: boolean;
   stderr: boolean;
   problemMatcher: ProblemMatcherConfig | ProblemMatcherConfig[] | undefined;
@@ -97,6 +98,7 @@ export class Task extends EventEmitter {
     try {
       this.process = spawn(this.path, this.args, {
         cwd: this.options.cwd,
+        env: this.options.env,
       });
     } catch (error) {
       this.handleStop(error);

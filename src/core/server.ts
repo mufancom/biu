@@ -80,6 +80,7 @@ export class Server extends EventEmitter {
         cwd: options.cwd
           ? Path.resolve(this.configDir, options.cwd)
           : process.cwd(),
+        env: options.env,
         stdout: !!options.stdout,
         stderr: !!options.stderr,
         problemMatcher: problemMatcherConfig,

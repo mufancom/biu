@@ -25,6 +25,7 @@ export interface TaskConfig {
   executable: string;
   args?: string[];
   cwd?: string;
+  env?: Dictionary<string>;
   stdout?: boolean;
   stderr?: boolean;
   watch?: string | string[];

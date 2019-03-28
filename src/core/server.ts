@@ -176,6 +176,20 @@ export class Server extends EventEmitter {
   private setup(): void {
     this.app.use(express.static(Path.join(__dirname, '../../static')));
     this.io.on('connection', socket => this.initializeConnection(socket));
+
+    let onSignalToExit = (): void => {
+      this.stopAll().then(
+        () => process.exit(),
+        error => {
+          console.error(error);
+          process.exit(1);
+        },
+      );
+    };
+
+    process.on('SIGINT', onSignalToExit);
+    process.on('SIGTERM', onSignalToExit);
+    process.on('SIGHUP', onSignalToExit);
   }
 
   private outputProblems(owner: string): void {

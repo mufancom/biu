@@ -98,7 +98,10 @@ export class Task extends EventEmitter {
     try {
       this.process = spawn(this.path, this.args, {
         cwd: this.options.cwd,
-        env: this.options.env,
+        env: {
+          ...process.env,
+          ...this.options.env,
+        },
       });
     } catch (error) {
       this.handleStop(error);
